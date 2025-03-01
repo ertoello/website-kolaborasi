@@ -1,38 +1,72 @@
+import { useState } from "react";
+import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import LoginForm from "../../components/auth/LoginForm";
 
 const LoginPage = () => {
-	return (
-		<div className='min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8'>
-			<div className='sm:mx-auto sm:w-full sm:max-w-md'>
-				<img className='mx-auto h-40 w-auto' src='/logo.svg' alt='LinkedIn' />
-				<h2 className=' text-center text-3xl font-extrabold text-gray-900'>Sign in to your account</h2>
-			</div>
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-			<div className='mt-8 sm:mx-auto sm:w-full sm:max-w-md shadow-md'>
-				<div className='bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10'>
-					<LoginForm />
-					<div className='mt-6'>
-						<div className='relative'>
-							<div className='absolute inset-0 flex items-center'>
-								<div className='w-full border-t border-gray-300'></div>
-							</div>
-							<div className='relative flex justify-center text-sm'>
-								<span className='px-2 bg-white text-gray-500'>New to LinkedIn?</span>
-							</div>
-						</div>
-						<div className='mt-6'>
-							<Link
-								to='/signup'
-								className='w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-blue-600 bg-white hover:bg-gray-50'
-							>
-								Join now
-							</Link>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Login attempt with:", { email, password });
+  };
+
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-[#F4F4F4]">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="bg-[#FFFFFF] p-8 rounded-2xl shadow-lg w-full max-w-4xl flex"
+      >
+        {/* Sembunyikan di Mobile */}
+        <div className="relative w-1/2 p-6 flex flex-col justify-center rounded-2xl text-[#3E3E3E] hidden md:flex">
+          <div
+            className="absolute inset-0 bg-cover bg-center opacity-50"
+            style={{ backgroundImage: "url('/logo.png')" }}
+          />
+          <div className="absolute inset-0 bg-[#3FA3CE] opacity-50 rounded-2xl" />
+          <div className="relative z-10">
+            <div className="relative bg-white bg-opacity-50 rounded-2xl shadow-2xl p-6 text-center">
+              <h2 className="text-lg md:text-xl font-bold text-[#145C75] drop-shadow-lg">
+                Bangun Koneksi, Wujudkan Ide, dan Kembangkan Komunitas Digital
+              </h2>
+            </div>
+            <p className="mt-4 text-center font-medium">
+              Transformasi Digital Desa dalam Satu Genggaman. Selamat datang di
+              Beopoeng Platform, solusi digital yang menghubungkan masyarakat
+              desa dengan teknologi.
+            </p>
+          </div>
+        </div>
+
+        {/* Form Login */}
+        <div className="sm:mx-auto sm:w-full sm:max-w-md">
+          <div className="bg-white py-8 px-4 sm:px-10">
+            <LoginForm />
+          </div>
+          <div className="mt-6 relative text-center">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-[#D7D7D7]"></div>
+            </div>
+            <div className="relative inline-block px-3 bg-white text-[#828282] text-sm">
+              Belum punya akun?
+            </div>
+          </div>
+
+          <div className="mt-6 text-center">
+            <Link
+              to="/Signup"
+              className="inline-block py-3 px-6 text-lg font-medium text-white bg-gradient-to-r from-[#2B7A98] to-[#145C75] rounded-lg shadow-lg hover:shadow-xl hover:from-[#145C75] hover:to-[#2B7A98] transition-all duration-300"
+            >
+              Daftar Sekarang
+            </Link>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
 };
+
 export default LoginPage;
