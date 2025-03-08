@@ -1,9 +1,32 @@
 import { Link } from "react-router-dom";
 import SignUpForm from "../../components/auth/SignUpForm";
+import FloatingShape from "../../components/FloatingShape";
 
 const SignUpPage = () => {
   return (
     <div className="min-h-screen flex flex-col lg:flex-row justify-center items-center">
+      <FloatingShape
+        color="bg-[#3FA3CE]" // Biru Muda
+        size="w-64 h-64"
+        top="-5%"
+        left="10%"
+        delay={0}
+      />
+      <FloatingShape
+        color="bg-[#EF8B8B]" // Merah Muda Pastel
+        size="w-48 h-48"
+        top="70%"
+        left="80%"
+        delay={5}
+      />
+      <FloatingShape
+        color="bg-[#145C75]" // Biru Tua
+        size="w-32 h-32"
+        top="40%"
+        left="-10%"
+        delay={2}
+      />
+
       {/* Bagian Kiri - Informasi */}
       <div className="lg:w-1/2 text-center lg:text-left">
         <img
@@ -16,23 +39,19 @@ const SignUpPage = () => {
           Bangun koneksi, wujudkan ide, dan kembangkan komunitas digital dengan
           lebih mudah dan modern.
         </p>
-        <div className="mt-8 grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4">
           <img
-            className="h-full rounded-lg shadow-lg"
+            className="h-full rounded-lg"
             src="/kolaborasi.png"
             alt="Kolaborasi"
           />
-          <img
-            className="h-full rounded-lg shadow-lg"
-            src="/inovasi.png"
-            alt="Inovasi"
-          />
+          <img className="h-full rounded-lg" src="/inovasi.png" alt="Inovasi" />
         </div>
       </div>
 
       {/* Bagian Kanan - Formulir Pendaftaran */}
       <div className="lg:w-1/2 mt-10 lg:mt-0 w-full max-w-lg bg-white p-10 rounded-2xl shadow-xl">
-        <h3 className="text-2xl font-semibold text-[#145C75] text-center">
+        <h3 className="text-2xl font-semibold text-[#145C75] text-center mb-4">
           Daftar Sekarang
         </h3>
         <SignUpForm />

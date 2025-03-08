@@ -35,7 +35,11 @@ const Navbar = () => {
         {/* Logo dan Search Bar */}
         <div className="flex items-center space-x-4">
           <Link to="/">
-            <img className="h-10 rounded-full" src="/logopanjang.png" alt="Kolaborasi" />
+            <img
+              className="h-10 rounded-full"
+              src="/logopanjang.png"
+              alt="Kolaborasi"
+            />
           </Link>
           <div className="relative w-64 md:w-96">
             <input
@@ -43,7 +47,10 @@ const Navbar = () => {
               placeholder="Cari komunitas, ide, inovasi..."
               className="w-full bg-gray-100 px-4 py-2 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            <Search className="absolute top-2 right-3 text-gray-500" size={20} />
+            <Search
+              className="absolute top-2 right-3 text-gray-500"
+              size={20}
+            />
           </div>
         </div>
         {/* Navigasi Ikon */}
@@ -51,16 +58,18 @@ const Navbar = () => {
           {authUser ? (
             <>
               <Link to="/" className="nav-icon">
-                <Home size={24} />
+                <Home size={26} />
               </Link>
               <Link to="/network" className="nav-icon relative">
-                <Users size={24} />
+                <Users size={26} />
                 {unreadConnectionRequestsCount > 0 && (
-                  <span className="badge">{unreadConnectionRequestsCount}</span>
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-2 py-1">
+                    {unreadConnectionRequestsCount}
+                  </span>
                 )}
               </Link>
               <Link to="/messages" className="nav-icon">
-                <MessageCircle size={24} />
+                <MessageCircle size={26} />
               </Link>
               <div className="relative">
                 <Link
@@ -76,16 +85,20 @@ const Navbar = () => {
                 )}
               </div>
               <Link to={`/profile/${authUser.username}`} className="nav-icon">
-                <User size={24} />
+                <User size={26} />
               </Link>
               <button onClick={() => logout()} className="nav-icon">
-                <LogOut size={24} />
+                <LogOut size={26} />
               </button>
             </>
           ) : (
             <>
-              <Link to="/login" className="btn-primary">Sign In</Link>
-              <Link to="/signup" className="btn-secondary">Join Now</Link>
+              <Link to="/login" className="btn-primary">
+                Sign In
+              </Link>
+              <Link to="/signup" className="btn-secondary">
+                Join Now
+              </Link>
             </>
           )}
         </div>

@@ -1,14 +1,19 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { axiosInstance } from "../../lib/axios.js";
+import { axiosInstance } from "../../lib/axios";
 import { toast } from "react-hot-toast";
-import { Loader } from "lucide-react";
+
+import Input from "../Input";
+import { Loader, Lock, Mail, User } from "lucide-react";
+import PasswordStrengthMeter from "../PasswordStrengthMeter";
+
 
 const SignUpForm = () => {
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
+	const [error, setError] = useState(null);
 
 	const queryClient = useQueryClient();
 
@@ -27,49 +32,64 @@ const SignUpForm = () => {
 	});
 
 	const handleSignUp = (e) => {
-		e.preventDefault();
-		signUpMutation({ name, username, email, password });
-	};
+    e.preventDefault();
+    try {
+      signUpMutation({ name, username, email, password });
+      navigate("/verify-email");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
 	return (
-		<form onSubmit={handleSignUp} className='flex flex-col gap-4'>
-			<input
-				type='text'
-				placeholder='Full name'
-				value={name}
-				onChange={(e) => setName(e.target.value)}
-				className='input input-bordered w-full'
-				required
-			/>
-			<input
-				type='text'
-				placeholder='Username'
-				value={username}
-				onChange={(e) => setUsername(e.target.value)}
-				className='input input-bordered w-full'
-				required
-			/>
-			<input
-				type='email'
-				placeholder='Email'
-				value={email}
-				onChange={(e) => setEmail(e.target.value)}
-				className='input input-bordered w-full'
-				required
-			/>
-			<input
-				type='password'
-				placeholder='Password (6+ characters)'
-				value={password}
-				onChange={(e) => setPassword(e.target.value)}
-				className='input input-bordered w-full'
-				required
-			/>
+    <form onSubmit={handleSignUp} className="flex flex-col gap-1">
+      <Input
+        icon={User}
+        type="text"
+        placeholder="Full name"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        required
+      />
+      <Input
+        icon={User}
+        type="text"
+        placeholder="Username"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        required
+      />
+      <Input
+        icon={Mail}
+        type="email"
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+      />
+      <Input
+        icon={Lock}
+        type="password"
+        placeholder="Password (6+ characters)"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        required
+      />
+      {error && <p className="text-red-500 font-semibold mt-2">{error}</p>}
+      <PasswordStrengthMeter password={password} />
 
-			<button type='submit' disabled={isLoading} className='btn btn-primary w-full text-white'>
-				{isLoading ? <Loader className='size-5 animate-spin' /> : "Agree & Join"}
-			</button>
-		</form>
-	);
+      <button
+        type="submit"
+        disabled={isLoading}
+        className="btn btn-primary w-full text-white"
+      >
+        {isLoading ? (
+          <Loader className="size-5 animate-spin" />
+        ) : (
+          "Agree & Join"
+        )}
+      </button>
+    </form>
+  );
 };
 export default SignUpForm;

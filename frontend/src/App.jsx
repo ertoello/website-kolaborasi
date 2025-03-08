@@ -12,6 +12,10 @@ import NetworkPage from "./pages/NetworkPage";
 import PostPage from "./pages/PostPage";
 import ProfilePage from "./pages/ProfilePage";
 
+import EmailVerificationPage from "./pages/EmailVerificationPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
+
 function App() {
 	const { data: authUser, isLoading } = useQuery({
 		queryKey: ["authUser"],
@@ -31,19 +35,51 @@ function App() {
 	if (isLoading) return null;
 
 	return (
-		<Layout>
-			<Routes>
-				<Route path='/' element={authUser ? <HomePage /> : <Navigate to={"/login"} />} />
-				<Route path='/signup' element={!authUser ? <SignUpPage /> : <Navigate to={"/"} />} />
-				<Route path='/login' element={!authUser ? <LoginPage /> : <Navigate to={"/"} />} />
-				<Route path='/notifications' element={authUser ? <NotificationsPage /> : <Navigate to={"/login"} />} />
-				<Route path='/network' element={authUser ? <NetworkPage /> : <Navigate to={"/login"} />} />
-				<Route path='/post/:postId' element={authUser ? <PostPage /> : <Navigate to={"/login"} />} />
-				<Route path='/profile/:username' element={authUser ? <ProfilePage /> : <Navigate to={"/login"} />} />
-			</Routes>
-			<Toaster />
-		</Layout>
-	);
+    <Layout>
+      <Routes>
+        <Route
+          path="/"
+          element={authUser ? <HomePage /> : <Navigate to={"/login"} />}
+        />
+        <Route
+          path="/signup"
+          element={!authUser ? <SignUpPage /> : <Navigate to={"/"} />}
+        />
+        <Route
+          path="/login"
+          element={!authUser ? <LoginPage /> : <Navigate to={"/"} />}
+        />
+        <Route path="/verify-email" element={<EmailVerificationPage />} />
+        <Route
+          path="/forgot-password"
+          element={!authUser ? <ForgotPasswordPage /> : <Navigate to={"/"} />}
+        />
+        <Route
+          path="/reset-password/:token"
+          element={!authUser ? <ResetPasswordPage /> : <Navigate to={"/"} />}
+        />
+        <Route
+          path="/notifications"
+          element={
+            authUser ? <NotificationsPage /> : <Navigate to={"/login"} />
+          }
+        />
+        <Route
+          path="/network"
+          element={authUser ? <NetworkPage /> : <Navigate to={"/login"} />}
+        />
+        <Route
+          path="/post/:postId"
+          element={authUser ? <PostPage /> : <Navigate to={"/login"} />}
+        />
+        <Route
+          path="/profile/:username"
+          element={authUser ? <ProfilePage /> : <Navigate to={"/login"} />}
+        />
+      </Routes>
+      <Toaster />
+    </Layout>
+  );
 }
 
 export default App;
