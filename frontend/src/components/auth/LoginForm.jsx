@@ -67,7 +67,7 @@ const LoginForm = () => {
         {error && <p className="text-red-500 font-semibold mb-2">{error}</p>}
         <button
           type="submit"
-          className="w-full p-3 rounded-xl bg-gradient-to-r from-[#3FA3CE] to-[#2B7A98] hover:from-[#2B7A98] hover:to-[#145C75] text-white font-extrabold text-lg tracking-wide uppercase shadow-lg transition duration-300 transform hover:scale-105"
+          className="w-full p-2 rounded-lg bg-gradient-to-r from-[#3FA3CE] to-[#2B7A98] hover:from-[#2B7A98] hover:to-[#145C75] text-white font-bold text-md tracking-wide uppercase shadow-lg transition duration-300 transform hover:scale-102"
         >
           {isLoading ? (
             <Loader className="size-6 animate-spin" />

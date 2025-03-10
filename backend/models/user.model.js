@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema(
     },
     headline: {
       type: String,
-      default: "Linkedin User",
+      default: "Pengguna Baru",
     },
     location: {
       type: String,

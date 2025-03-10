@@ -81,7 +81,7 @@ const SignUpForm = () => {
       <button
         type="submit"
         disabled={isLoading}
-        className="btn btn-primary w-full text-white"
+        className="w-full p-2 rounded-lg bg-gradient-to-r from-[#3FA3CE] to-[#2B7A98] hover:from-[#2B7A98] hover:to-[#145C75] text-white font-bold text-md tracking-wide uppercase shadow-lg transition duration-300 transform hover:scale-102"
       >
         {isLoading ? (
           <Loader className="size-5 animate-spin" />
