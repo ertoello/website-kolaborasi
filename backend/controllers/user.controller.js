@@ -13,7 +13,7 @@ export const getSuggestedConnections = async (req, res) => {
 			},
 		})
 			.select("name username profilePicture headline")
-			.limit(3);
+			.limit(7);
 
 		res.json(suggestedUser);
 	} catch (error) {
@@ -80,3 +80,28 @@ export const updateProfile = async (req, res) => {
 		res.status(500).json({ message: "Server error" });
 	}
 };
+
+export const searchUsers = async (req, res) => {
+  try {
+    const { query } = req.query; // Ambil input pencarian dari query parameter
+
+    if (!query) {
+      return res.status(400).json({ message: "Query is required" });
+    }
+
+    // Cari user berdasarkan nama, username, atau email dengan pencarian case-insensitive
+    const users = await User.find({
+      $or: [
+        { name: { $regex: query, $options: "i" } }, // "i" agar tidak case-sensitive
+        { username: { $regex: query, $options: "i" } },
+        { email: { $regex: query, $options: "i" } },
+      ],
+    }).select("-password");
+
+    res.status(200).json(users);
+  } catch (error) {
+    console.error("Error in searchUsers controller:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
