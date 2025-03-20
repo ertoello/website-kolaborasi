@@ -45,7 +45,7 @@ export const signup = async (req, res) => {
       password: hashedPassword,
       username,
       verificationToken,
-      verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000,
+      verificationTokenExpiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
     });
 
     await user.save();
@@ -80,7 +80,7 @@ export const verifyEmail = async (req, res) => {
     const user = await User.findOne({
       verificationToken: code,
       verificationTokenExpiresAt: { $gt: Date.now() },
-    });
+    }); 
 
     if (!user) {
       return res.status(400).json({
@@ -116,50 +116,85 @@ export const login = async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    // Check if user exists
+    // Validasi input
+    if (!username || !password) {
+      return res.status(400).json({ message: "Username and password are required" });
+    }
+
+    // Cek apakah user ada di database
     const user = await User.findOne({ username });
     if (!user) {
-      return res.status(400).json({ message: "Invalid credentials" });
+      return res.status(401).json({ message: "Invalid username or password" });
     }
 
-    // Check password
+    // Cek apakah akun sudah diverifikasi
+    if (!user.isVerified) {
+      return res.status(403).json({ message: "Please verify your email before logging in" });
+    }
+
+    // Cek kecocokan password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ message: "Invalid credentials" });
+      return res.status(401).json({ message: "Invalid username or password" });
     }
 
-    // Create and send token
+    // Buat token JWT
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
       expiresIn: "3d",
     });
-    await res.cookie("jwt-linkedin", token, {
+
+    // Set cookie dengan token
+    res.cookie("jwt-linkedin", token, {
       httpOnly: true,
-      maxAge: 3 * 24 * 60 * 60 * 1000,
+      maxAge: 3 * 24 * 60 * 60 * 1000, // 3 hari
       sameSite: "strict",
       secure: process.env.NODE_ENV === "production",
     });
 
+    // Perbarui waktu login terakhir
     user.lastLogin = new Date();
     await user.save();
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Logged in successfully",
       user: {
-        ...user._doc,
-        password: undefined,
+        _id: user._id,
+        name: user.name,
+        username: user.username,
+        email: user.email,
+        isVerified: user.isVerified,
+        lastLogin: user.lastLogin,
       },
     });
   } catch (error) {
-    console.log("Error in login ", error);
-    res.status(400).json({ success: false, message: error.message });
+    console.error("Error in login:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 
 export const logout = (req, res) => {
-	res.clearCookie("jwt-linkedin");
-	res.json({ message: "Logged out successfully" });
+  try {
+    // Hapus semua cookie dengan mengulang setiap cookie dalam request
+    Object.keys(req.cookies).forEach((cookie) => {
+      res.clearCookie(cookie, {
+        httpOnly: true,
+        sameSite: "strict",
+        secure: process.env.NODE_ENV === "production",
+      });
+    });
+
+    return res
+      .status(200)
+      .json({ success: true, message: "Logged out successfully" });
+  } catch (error) {
+    console.error("Error in logout:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
 };
+
 
 export const getCurrentUser = async (req, res) => {
 	try {
@@ -225,7 +260,7 @@ export const resetPassword = async (req, res) => {
     }
 
     // update password
-    const hashedPassword = await bcryptjs.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     user.password = hashedPassword;
     user.resetPasswordToken = undefined;

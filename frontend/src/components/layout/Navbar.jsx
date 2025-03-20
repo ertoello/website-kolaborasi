@@ -10,7 +10,7 @@ import {
   Search,
   MessageCircle,
   XCircle,
-} from "lucide-react"; // ✅ Tambahkan XCircle
+} from "lucide-react";
 import { useState } from "react";
 
 const Navbar = () => {
@@ -20,12 +20,21 @@ const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
 
-  // ✅ Fungsi pencarian
+  // Fungsi untuk disconnect socket
+  const disconnectSocket = () => {
+    if (window.socket?.connected) {
+      window.socket.disconnect();
+    }
+  };
+
+  // Fungsi pencarian
   const handleSearch = async (query) => {
     setSearchQuery(query);
     if (query.length > 2) {
       try {
-        const response = await axiosInstance.get(`/users/search?query=${query}`);
+        const response = await axiosInstance.get(
+          `/users/search?query=${query}`
+        );
         setSearchResults(response.data);
       } catch (error) {
         console.error("Error fetching search results:", error);
@@ -54,6 +63,20 @@ const Navbar = () => {
     },
   });
 
+  // Fungsi logout dengan disconnect socket & clear localStorage
+  const handleLogout = () => {
+    disconnectSocket(); // Putuskan koneksi socket
+    localStorage.clear(); // Hapus semua data di localStorage
+    sessionStorage.clear(); // Hapus semua data di sessionStorage (jika ada)
+    // Menghapus cookies jika ada
+    document.cookie.split(";").forEach(function (cookie) {
+      document.cookie = cookie
+        .replace(/^ +/, "")
+        .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+    });
+    logout(); // Logout dari server
+  };
+
   const unreadNotificationCount = notifications?.data?.filter(
     (notif) => !notif.read
   ).length;
@@ -72,13 +95,12 @@ const Navbar = () => {
           </Link>
         </div>
 
-        {/* ✅ Navigasi Ikon */}
+        {/* Navigasi Ikon */}
         <div className="flex items-center justify-end w-full px-6">
           {authUser ? (
             <>
-              {/* ✅ Search Bar dan Navigasi di Tengah */}
+              {/* Search Bar dan Navigasi */}
               <div className="flex items-center gap-6 mx-auto">
-                {/* ✅ Search Bar */}
                 <div className="relative w-64 md:w-80">
                   <input
                     type="text"
@@ -92,7 +114,6 @@ const Navbar = () => {
                     size={20}
                   />
 
-                  {/* ✅ Dropdown hasil pencarian */}
                   {searchQuery.length > 2 && (
                     <div className="absolute bg-white shadow-lg w-full rounded-md mt-2 max-h-60 overflow-y-auto">
                       {searchResults.length > 0 ? (
@@ -122,7 +143,7 @@ const Navbar = () => {
                   )}
                 </div>
 
-                {/* ✅ Ikon Navigasi */}
+                {/* Ikon Navigasi */}
                 <div className="flex items-center gap-4">
                   <Link to="/" className="nav-icon">
                     <Home size={26} />
@@ -151,7 +172,7 @@ const Navbar = () => {
                 </div>
               </div>
 
-              {/* ✅ Profil & Logout */}
+              {/* Profil & Logout */}
               <div className="flex items-center gap-4">
                 <Link to={`/profile/${authUser.username}`}>
                   <img
@@ -160,7 +181,7 @@ const Navbar = () => {
                     alt={authUser.name}
                   />
                 </Link>
-                <button onClick={() => logout()} className="nav-icon">
+                <button onClick={handleLogout} className="nav-icon">
                   <LogOut size={26} />
                 </button>
               </div>
