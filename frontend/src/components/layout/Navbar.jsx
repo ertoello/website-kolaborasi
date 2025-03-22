@@ -12,20 +12,22 @@ import {
   XCircle,
 } from "lucide-react";
 import { useState } from "react";
+import LogoutModal from "./LogoutModal"; // Import komponen modal logout
 
 const Navbar = () => {
-  const { data: authUser } = useQuery({ queryKey: ["authUser"] });
+  const { data: authUser } = useQuery({
+    queryKey: ["authUser"],
+    queryFn: async () => {
+      const response = await axiosInstance.get("/auth/me");
+      return response.data;
+    },
+    initialData: null, // Bisa juga diisi dengan data default dari localStorage
+  });
+
   const queryClient = useQueryClient();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-
-  // Fungsi untuk disconnect socket
-  const disconnectSocket = () => {
-    if (window.socket?.connected) {
-      window.socket.disconnect();
-    }
-  };
 
   // Fungsi pencarian
   const handleSearch = async (query) => {
@@ -56,27 +58,6 @@ const Navbar = () => {
     enabled: !!authUser,
   });
 
-  const { mutate: logout } = useMutation({
-    mutationFn: () => axiosInstance.post("/auth/logout"),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["authUser"] });
-    },
-  });
-
-  // Fungsi logout dengan disconnect socket & clear localStorage
-  const handleLogout = () => {
-    disconnectSocket(); // Putuskan koneksi socket
-    localStorage.clear(); // Hapus semua data di localStorage
-    sessionStorage.clear(); // Hapus semua data di sessionStorage (jika ada)
-    // Menghapus cookies jika ada
-    document.cookie.split(";").forEach(function (cookie) {
-      document.cookie = cookie
-        .replace(/^ +/, "")
-        .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-    });
-    logout(); // Logout dari server
-  };
-
   const unreadNotificationCount = notifications?.data?.filter(
     (notif) => !notif.read
   ).length;
@@ -86,7 +67,7 @@ const Navbar = () => {
     <nav className="bg-white shadow-md sticky top-0 z-10 border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 flex justify-around items-center py-3">
         <div className="flex items-center space-x-4">
-          <Link to="/">
+          <Link to="/dashboard">
             <img
               className="h-10 rounded-full"
               src="/logopanjang.png"
@@ -181,9 +162,7 @@ const Navbar = () => {
                     alt={authUser.name}
                   />
                 </Link>
-                <button onClick={handleLogout} className="nav-icon">
-                  <LogOut size={26} />
-                </button>
+                <LogoutModal /> {/* Gunakan LogoutModal di sini */}
               </div>
             </>
           ) : (

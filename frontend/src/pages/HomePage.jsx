@@ -7,7 +7,14 @@ import { Users } from "lucide-react";
 import RecommendedUser from "../components/RecommendedUser";
 
 const HomePage = () => {
-	const { data: authUser } = useQuery({ queryKey: ["authUser"] });
+	const { data: authUser } = useQuery({
+    queryKey: ["authUser"],
+    queryFn: async () => {
+      const response = await axiosInstance.get("/auth/me");
+      return response.data;
+    },
+    initialData: null, // Bisa juga diisi dengan data default dari localStorage
+  });
 
 	const { data: recommendedUsers } = useQuery({
 		queryKey: ["recommendedUsers"],

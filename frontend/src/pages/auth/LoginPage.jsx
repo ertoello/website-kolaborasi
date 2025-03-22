@@ -5,14 +5,6 @@ import LoginForm from "../../components/auth/LoginForm";
 import FloatingShape from "../../components/FloatingShape";
 
 const LoginPage = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Login attempt with:", { email, password });
-  };
-
   return (
     <div className="flex items-center justify-center min-h-screen bg-[#F4F4F4]">
       <FloatingShape
