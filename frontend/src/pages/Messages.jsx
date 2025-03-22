@@ -28,12 +28,16 @@ const MessagesContent = () => {
   const { socket, selectedUser } = useChatStore();
 
   return (
-    <div className="h-screen bg-base-200">
+    <div className="h-screen">
       <div className="flex items-center justify-center py-2 px-2">
-        <div className="bg-base-100 rounded-lg shadow-cl w-full max-w-6xl h-[calc(100vh-8rem)]">
+        <div className="bg-[#78C1E4] rounded-xl shadow-cl w-full max-w-6xl h-lvh">
           <div className="flex h-full rounded-lg overflow-hidden">
             <SidebarChat socket={socket} />
-            {selectedUser ? <ChatContainer socket={socket} /> : <NoChatSelected />}
+            {selectedUser ? (
+              <ChatContainer socket={socket} />
+            ) : (
+              <NoChatSelected />
+            )}
           </div>
         </div>
       </div>

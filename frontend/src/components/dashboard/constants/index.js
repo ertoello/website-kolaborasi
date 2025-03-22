@@ -59,26 +59,26 @@ export const features = [
 
 export const footerLinks = [
   {
-    title: "Navigasi",
+    title: "NAVIGASI",
     links: [
       {
-        name: "BERANDA",
+        name: "Beranda",
         id: "BERANDA", // Benar (mengacu pada ID di HTML)
       },
       {
-        name: "KOLABORASI & INOVASI",
+        name: "Kolaborasi & Inovasi",
         id: "KOLABORASI & INOVASI", // Perbaikan: spasi diubah menjadi "-" atau "_"
       },
       {
-        name: "DASHBOARD INTERAKTIF",
+        name: "Dashboard Interaktif",
         id: "DASHBOARD INTERAKTIF", // Ditambahkan "#" agar bisa dipakai untuk navigasi internal
       },
       {
-        name: "KOMUNIKASI CEPAT & INTERAKTIF",
+        name: "Komunikasi Cepat & Interaktif",
         id: "KOMUNIKASI CEPAT & INTERAKTIF", // Ditambahkan "#" dan spasi diganti "-"
       },
       {
-        name: "PROFIL & BRANDING",
+        name: "Profil & Branding",
         id: "PROFIL & BRANDING", // Ditambahkan "#" agar bisa digunakan untuk scroll
       },
     ],

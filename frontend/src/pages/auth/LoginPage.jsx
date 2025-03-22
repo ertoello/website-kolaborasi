@@ -6,7 +6,7 @@ import FloatingShape from "../../components/FloatingShape";
 
 const LoginPage = () => {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[#F4F4F4]">
+    <div className="flex items-center justify-center min-h-screen">
       <FloatingShape
         color="bg-[#3FA3CE]" // Biru Muda
         size="w-64 h-64"

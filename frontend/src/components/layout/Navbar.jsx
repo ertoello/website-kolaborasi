@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { axiosInstance } from "../../lib/axios";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   Bell,
   Home,
@@ -62,6 +62,7 @@ const Navbar = () => {
     (notif) => !notif.read
   ).length;
   const unreadConnectionRequestsCount = connectionRequests?.data?.length;
+  const location = useLocation();
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-10 border-b border-gray-200">
@@ -168,11 +169,30 @@ const Navbar = () => {
           ) : (
             <>
               <div className="flex items-center space-x-4">
-                <Link to="/login" className="btn-primary">
-                  Sign In
+                {/* Tombol Sign In */}
+                <Link
+                  to="/login"
+                  className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold transition-all duration-300 hover:scale-105 
+      ${
+        location.pathname === "/login"
+          ? "text-white bg-[#3FA3CE] shadow-md" // Jika aktif
+          : "text-[#3FA3CE] border-2 border-[#3FA3CE] shadow-sm hover:bg-[#3FA3CE] hover:text-white" // Jika tidak aktif
+      }`}
+                >
+                  <span>Sign In</span>
                 </Link>
-                <Link to="/signup" className="btn-secondary">
-                  Join Now
+
+                {/* Tombol Join Now */}
+                <Link
+                  to="/signup"
+                  className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold transition-all duration-300 hover:scale-105 
+      ${
+        location.pathname === "/signup"
+          ? "text-white bg-gray-400 shadow-md" // Jika aktif
+          : "text-gray-700 border-2 border-gray-400 shadow-sm hover:bg-gray-400 hover:text-white" // Jika tidak aktif
+      }`}
+                >
+                  <span>Join Now</span>
                 </Link>
               </div>
             </>

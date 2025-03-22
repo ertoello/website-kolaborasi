@@ -15,7 +15,7 @@ const LoadingModal = () => {
         transition={{ duration: 0.5, ease: "easeInOut" }}
         className="bg-white p-6 rounded-xl shadow-2xl flex flex-col items-center"
       >
-        <div className="w-16 h-16 border-4 border-t-[#3FA3CE] border-b-[#145C75] border-l-[#EF8B8B] border-r-[#F4F4F4] rounded-full animate-spin mb-4"></div>
+        <div className="w-16 h-16 border-4 border-t-[#145C75] border-b-[#78C1E4] border-l-[#3FA3CE] border-r-[#F4F4F4] rounded-full animate-spin mb-4"></div>
         <h2 className="text-lg font-semibold text-[#145C75]">
           Mohon Tunggu...
         </h2>

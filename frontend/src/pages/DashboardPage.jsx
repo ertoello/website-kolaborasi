@@ -11,7 +11,7 @@ import {
 import FloatingShape from "../components/FloatingShape";
 
 const DashboardPage = () => (
-  <div className="relative flex items-center justify-center min-h-screen bg-[#F4F4F4] overflow-hidden">
+  <div className="relative flex items-center justify-center min-h-screen overflow-hidden">
     {/* Elemen dekoratif */}
     <FloatingShape color="bg-[#3FA3CE]" size="w-64 h-64" top="-5%" left="10%" delay={0} />
     <FloatingShape color="bg-[#EF8B8B]" size="w-48 h-48" top="70%" left="80%" delay={5} />
@@ -40,11 +40,6 @@ const DashboardPage = () => (
         <Billing />
         <CardDeal />
         <Testimonials />
-      </div>
-      
-      {/* Footer */}
-      <div className="mt-6">
-        <Footer />
       </div>
     </motion.div>
   </div>

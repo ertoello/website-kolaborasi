@@ -30,7 +30,7 @@ const SidebarChat = () => {
   if (isUsersLoading) return <SidebarSkeleton />;
 
   return (
-    <aside className="h-full w-20 lg:w-72 border-r border-base-300 flex flex-col transition-all duration-200">
+    <aside className="h-full w-20 lg:w-72 border-r border-base-300 flex flex-col transition-all duration-200 bg-[#3FA3CE]">
       <div className="border-b border-base-300 w-full p-5">
         <div className="flex items-center gap-2">
           <Users className="size-6" />
@@ -47,7 +47,7 @@ const SidebarChat = () => {
             />
             <span className="text-sm">Show online only</span>
           </label>
-          <span className="text-xs text-zinc-500">
+          <span className="text-xs text-zinc-800">
             ({Math.max(onlineUsers.length - 1, 0)} online)
           </span>
         </div>
@@ -60,10 +60,10 @@ const SidebarChat = () => {
             onClick={() => handleSelectUser(user)}
             className={`
               w-full p-3 flex items-center gap-3
-              hover:bg-base-300 transition-colors
+              hover:bg-gray-300 transition-colors
               ${
                 selectedUser?._id === user._id
-                  ? "bg-base-300 ring-1 ring-base-300"
+                  ? "bg-gray-100 ring-1 ring-base-300"
                   : ""
               }
             `}
@@ -84,7 +84,7 @@ const SidebarChat = () => {
 
             <div className="hidden lg:block text-left min-w-0">
               <div className="font-medium truncate">{user.name}</div>
-              <div className="text-sm text-zinc-400">
+              <div className="text-sm text-zinc-700">
                 {onlineUsers.includes(user._id) ? "Online" : "Offline"}
               </div>
             </div>

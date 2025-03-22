@@ -46,7 +46,8 @@ const LogoutModal = () => {
       {/* Tombol Logout */}
       <button
         onClick={() => setIsOpen(true)}
-        className="flex items-center gap-2 text-gray-700 hover:text-red-300 transition-all duration-300"
+        className="flex items-center gap-2 px-4 py-2 text-gray-700 border-2 border-transparent rounded-lg transition-all duration-300 
+             hover:text-gray-700 hover:border-gray-700 active:bg-gray-700 active:text-white"
       >
         <LogOut size={24} />
         <span className="font-medium">Logout</span>

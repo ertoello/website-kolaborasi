@@ -22,6 +22,7 @@ import { SocketProvider } from "./SocketProvider";
 // Import Context Loading
 import { LoadingProvider, useLoading } from "./components/loading/LoadingContext";
 import LoadingModal from "./components/loading/LoadingModal";
+import {Footer} from "./components/dashboard";
 
 function AppContent() {
   const { showLoading, hideLoading } = useLoading();
@@ -107,6 +108,11 @@ function AppContent() {
         </Routes>
         <Toaster />
       </Layout>
+      {/* Footer tanpa padding dari container utama */}
+      <div className="w-full mt-6">
+        <Footer />
+      </div>
+
     </SocketProvider>
   );
 }
