@@ -46,7 +46,7 @@ const SignUpForm = () => {
       <Input
         icon={User}
         type="text"
-        placeholder="Full name"
+        placeholder="Nama Lengkap"
         value={name}
         onChange={(e) => setName(e.target.value)}
         required
@@ -70,7 +70,7 @@ const SignUpForm = () => {
       <Input
         icon={Lock}
         type="password"
-        placeholder="Password (6+ characters)"
+        placeholder="Kata Sandi (6+ characters)"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         required

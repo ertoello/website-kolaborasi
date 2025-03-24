@@ -7,7 +7,7 @@ const ChatHeader = () => {
   if (!selectedUser) return null;
 
   return (
-    <div className="p-2.5 border-b border-base-300">
+    <div className="p-2.5 border-b border-white bg-[#3FA3CE]">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="avatar">
@@ -21,7 +21,7 @@ const ChatHeader = () => {
 
           <div>
             <h3 className="font-medium">{selectedUser?.name || "Unknown"}</h3>
-            <p className="text-sm text-base-content/70">
+            <p className="text-sm text-base-content/70 text-green-300">
               {onlineUsers.includes(selectedUser?._id) ? "Online" : "Offline"}
             </p>
           </div>

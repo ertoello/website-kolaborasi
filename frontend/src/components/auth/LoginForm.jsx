@@ -50,7 +50,7 @@ const LoginForm = () => {
         <Input
           icon={Lock}
           type="password"
-          placeholder="Password"
+          placeholder="Kata Sandi"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
