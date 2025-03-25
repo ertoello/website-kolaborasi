@@ -4,40 +4,70 @@ import Notification from "../models/notification.model.js";
 import User from "../models/user.model.js";
 
 export const sendConnectionRequest = async (req, res) => {
-	try {
-		const { userId } = req.params;
-		const senderId = req.user._id;
+  try {
+    const { userId } = req.params;
+    const senderId = req.user._id;
 
-		if (senderId.toString() === userId) {
-			return res.status(400).json({ message: "You can't send a request to yourself" });
-		}
+    // Tidak boleh mengirim permintaan ke diri sendiri
+    if (senderId.toString() === userId) {
+      return res
+        .status(400)
+        .json({ message: "You can't send a request to yourself" });
+    }
 
-		if (req.user.connections.includes(userId)) {
-			return res.status(400).json({ message: "You are already connected" });
-		}
+    // Jika sudah terhubung, tolak permintaan
+    if (req.user.connections.includes(userId)) {
+      return res.status(400).json({ message: "You are already connected" });
+    }
 
-		const existingRequest = await ConnectionRequest.findOne({
-			sender: senderId,
-			recipient: userId,
-			status: "pending",
-		});
+    // Jika pengguna yang login adalah "pengurusdesa", langsung terima koneksi
+    if (req.user.username === "pengurusdesa") {
+      await User.findByIdAndUpdate(senderId, {
+        $addToSet: { connections: userId },
+      });
+      await User.findByIdAndUpdate(userId, {
+        $addToSet: { connections: senderId },
+      });
 
-		if (existingRequest) {
-			return res.status(400).json({ message: "A connection request already exists" });
-		}
+      const notification = new Notification({
+        recipient: userId,
+        type: "connectionAccepted",
+        relatedUser: senderId,
+      });
+      await notification.save();
 
-		const newRequest = new ConnectionRequest({
-			sender: senderId,
-			recipient: userId,
-		});
+      return res
+        .status(201)
+        .json({ message: "Connection instantly accepted as 'pengurusdesa'" });
+    }
 
-		await newRequest.save();
+    // Jika bukan "pengurusdesa", lakukan permintaan koneksi seperti biasa
+    const existingRequest = await ConnectionRequest.findOne({
+      sender: senderId,
+      recipient: userId,
+      status: "pending",
+    });
 
-		res.status(201).json({ message: "Connection request sent successfully" });
-	} catch (error) {
-		res.status(500).json({ message: "Server error" });
-	}
+    if (existingRequest) {
+      return res
+        .status(400)
+        .json({ message: "A connection request already exists" });
+    }
+
+    const newRequest = new ConnectionRequest({
+      sender: senderId,
+      recipient: userId,
+    });
+
+    await newRequest.save();
+
+    res.status(201).json({ message: "Connection request sent successfully" });
+  } catch (error) {
+    console.error("Error in sendConnectionRequest controller:", error);
+    res.status(500).json({ message: "Server error" });
+  }
 };
+
 
 export const acceptConnectionRequest = async (req, res) => {
 	try {

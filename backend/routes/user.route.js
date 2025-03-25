@@ -5,6 +5,8 @@ import {
   getPublicProfile,
   updateProfile,
   searchUsers,
+  updateUser,
+  deleteUser,
 } from "../controllers/user.controller.js";
 
 const router = express.Router();
@@ -14,5 +16,7 @@ router.get("/search", protectRoute, searchUsers);
 router.get("/:username", protectRoute, getPublicProfile);
 
 router.put("/profile", protectRoute, updateProfile);
+router.put("/:id", protectRoute, updateUser);
+router.delete("/:id", protectRoute, deleteUser);
 
 export default router;

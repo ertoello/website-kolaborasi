@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    nik: { type: String, required: true, unique: true },
     username: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
@@ -14,6 +15,10 @@ const userSchema = new mongoose.Schema(
       default: Date.now,
     },
     isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    isApproved: {
       type: Boolean,
       default: false,
     },

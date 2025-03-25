@@ -7,41 +7,41 @@ import Input from "../Input";
 import { Loader, Lock, Mail, User } from "lucide-react";
 import PasswordStrengthMeter from "../PasswordStrengthMeter";
 
-
 const SignUpForm = () => {
-	const [name, setName] = useState("");
-	const [email, setEmail] = useState("");
-	const [username, setUsername] = useState("");
-	const [password, setPassword] = useState("");
-	const [error, setError] = useState(null);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [nik, setNik] = useState("");
+  const [error, setError] = useState(null);
 
-	const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
-	const { mutate: signUpMutation, isLoading } = useMutation({
-		mutationFn: async (data) => {
-			const res = await axiosInstance.post("/auth/signup", data);
-			return res.data;
-		},
-		onSuccess: () => {
-			toast.success("Account created successfully");
-			queryClient.invalidateQueries({ queryKey: ["authUser"] });
-		},
-		onError: (err) => {
-			toast.error(err.response.data.message || "Something went wrong");
-		},
-	});
+  const { mutate: signUpMutation, isLoading } = useMutation({
+    mutationFn: async (data) => {
+      const res = await axiosInstance.post("/auth/signup", data);
+      return res.data;
+    },
+    onSuccess: () => {
+      toast.success("Account created successfully");
+      queryClient.invalidateQueries({ queryKey: ["authUser"] });
+    },
+    onError: (err) => {
+      toast.error(err.response.data.message || "Something went wrong");
+    },
+  });
 
-	const handleSignUp = (e) => {
+  const handleSignUp = (e) => {
     e.preventDefault();
     try {
-      signUpMutation({ name, username, email, password });
+      signUpMutation({ name, username, email, password, nik });
       navigate("/verify-email");
     } catch (error) {
       console.log(error);
     }
   };
 
-	return (
+  return (
     <form onSubmit={handleSignUp} className="flex flex-col gap-1">
       <Input
         icon={User}
@@ -51,6 +51,16 @@ const SignUpForm = () => {
         onChange={(e) => setName(e.target.value)}
         required
       />
+
+      <Input
+        icon={User}
+        type="text"
+        placeholder="NIK Kamu"
+        value={nik}
+        onChange={(e) => setNik(e.target.value)}
+        required
+      />
+
       <Input
         icon={User}
         type="text"

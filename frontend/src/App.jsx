@@ -11,8 +11,10 @@ import PostPage from "./pages/PostPage";
 import ProfilePage from "./pages/ProfilePage";
 import Messages from "./pages/Messages";
 import EmailVerificationPage from "./pages/EmailVerificationPage";
+import WaitingApprovalPage from "./pages/WaitingApprovalPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
+import DashboardAdmin from "./pages/DashboardAdmin";
 
 import toast, { Toaster } from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
@@ -75,6 +77,7 @@ function AppContent() {
             element={!authUser ? <LoginPage /> : <Navigate to="/" />}
           />
           <Route path="/verify-email" element={<EmailVerificationPage />} />
+          <Route path="/waiting-approval" element={<WaitingApprovalPage />} />
           <Route
             path="/forgot-password"
             element={!authUser ? <ForgotPasswordPage /> : <Navigate to="/" />}
@@ -105,6 +108,16 @@ function AppContent() {
             path="/messages"
             element={authUser ? <Messages /> : <Navigate to="/dashboard" />}
           />
+          <Route
+            path="/dashboardadmin"
+            element={
+              authUser?.username === "pengurusdesa" ? (
+                <DashboardAdmin />
+              ) : (
+                <Navigate to="/dashboard" />
+              )
+            }
+          />
         </Routes>
         <Toaster />
       </Layout>
@@ -112,7 +125,6 @@ function AppContent() {
       <div className="w-full mt-6">
         <Footer />
       </div>
-
     </SocketProvider>
   );
 }

@@ -18,9 +18,16 @@ const EmailVerificationPage = () => {
       });
       return res.data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast.success("Email berhasil diverifikasi!");
-      navigate("/");
+
+      if (!data.user.isVerified) {
+        // Jika akun belum disetujui, arahkan ke halaman "Menunggu Konfirmasi"
+        navigate("/waiting-approval");
+      } else {
+        // Jika akun sudah disetujui, arahkan ke halaman utama
+        navigate("/");
+      }
     },
     onError: (err) => {
       toast.error(err.response?.data?.message || "Verifikasi gagal!");
@@ -31,7 +38,6 @@ const EmailVerificationPage = () => {
   const handleChange = (index, value) => {
     const newCode = [...code];
 
-    // Jika ada paste kode 6 digit langsung
     if (value.length > 1) {
       const pastedCode = value.slice(0, 6).split("");
       for (let i = 0; i < 6; i++) {
@@ -39,7 +45,6 @@ const EmailVerificationPage = () => {
       }
       setCode(newCode);
 
-      // Fokus ke input berikutnya yang kosong
       const lastFilledIndex = newCode.findLastIndex((digit) => digit !== "");
       const focusIndex = lastFilledIndex < 5 ? lastFilledIndex + 1 : 5;
       inputRefs.current[focusIndex]?.focus();
@@ -47,28 +52,24 @@ const EmailVerificationPage = () => {
       newCode[index] = value;
       setCode(newCode);
 
-      // Fokus ke input berikutnya jika karakter sudah diisi
       if (value && index < 5) {
         inputRefs.current[index + 1]?.focus();
       }
     }
   };
 
-  // Handle tombol backspace untuk navigasi ke input sebelumnya
   const handleKeyDown = (index, e) => {
     if (e.key === "Backspace" && !code[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
   };
 
-  // Submit kode verifikasi
   const handleSubmit = (e) => {
     e.preventDefault();
     const verificationCode = code.join("");
     verifyEmail(verificationCode);
   };
 
-  // Auto submit ketika semua input terisi
   useEffect(() => {
     if (code.every((digit) => digit !== "")) {
       handleSubmit(new Event("submit"));
