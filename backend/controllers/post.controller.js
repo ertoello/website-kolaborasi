@@ -2,6 +2,7 @@ import cloudinary from "../lib/cloudinary.js";
 import Post from "../models/post.model.js";
 import Notification from "../models/notification.model.js";
 import { sendCommentNotificationEmail } from "../emails/emailHandlers.js";
+import User from "../models/user.model.js";
 
 export const getFeedPosts = async (req, res) => {
 	try {
@@ -167,3 +168,28 @@ export const likePost = async (req, res) => {
 		res.status(500).json({ message: "Server error" });
 	}
 };
+
+export const getPostsByUsername = async (req, res) => {
+  try {
+    const { username } = req.params;
+
+    // Cari user berdasarkan username
+    const user = await User.findOne({ username }).select("_id");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Ambil semua postingan yang dibuat oleh user tersebut
+    const posts = await Post.find({ author: user._id })
+      .populate("author", "name username profilePicture headline")
+      .populate("comments.user", "name profilePicture")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(posts);
+  } catch (error) {
+    console.error("Error in getPostsByUsername controller:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+

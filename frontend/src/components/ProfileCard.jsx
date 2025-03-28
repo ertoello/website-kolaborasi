@@ -21,7 +21,11 @@ export default function ProfileCard({ user, sidebarOpen }) {
           <h2 className="text-xl font-semibold mt-2">{user.name}</h2>
           <p className="text-info">{user.headline}</p>
           <p className="text-info text-xs">
-            {user.connections?.length || 0} connections
+            {user.connections.length > 0 ? (
+              <span>{user.connections.length} Koneksi</span>
+            ) : (
+              <span className="text-[#CCCCCC]">Belum Ada Koneksi</span>
+            )}
           </p>
         </>
       )}

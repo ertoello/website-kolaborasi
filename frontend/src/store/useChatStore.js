@@ -72,6 +72,15 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
+  getUserById: async (userId) => {
+    try {
+      const res = await axios.get(`/connections/${userId}`);
+      set({ selectedUser: res.data }); // Hanya simpan 1 user berdasarkan ID
+    } catch (error) {
+      console.error("Error fetching user:", error);
+    }
+  },
+
   sendMessage: async (messageData) => {
     const { selectedUser, messages, socket } = get();
     if (!socket) return;

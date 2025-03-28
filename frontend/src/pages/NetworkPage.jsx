@@ -6,7 +6,10 @@ import FriendRequest from "../components/FriendRequest";
 import UserCard from "../components/UserCard";
 
 const NetworkPage = () => {
-	const { data: user } = useQuery({ queryKey: ["authUser"] });
+	const { data: user } = useQuery({
+    queryKey: ["authUser"],
+    queryFn: () => axiosInstance.get("/auth/me").then((res) => res.data), // Sesuaikan endpoint
+  });
 
 	const { data: connectionRequests } = useQuery({
 		queryKey: ["connectionRequests"],

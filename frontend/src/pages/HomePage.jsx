@@ -6,6 +6,7 @@ import PostCreation from "../components/PostCreation";
 import Post from "../components/Post";
 import { Users } from "lucide-react";
 import RecommendedUser from "../components/RecommendedUser";
+import VerifiedUsers from "../components/VerifiedUsers";
 
 const HomePage = () => {
   const [page, setPage] = useState(1); // State untuk halaman saat ini
@@ -18,6 +19,16 @@ const HomePage = () => {
       return response.data;
     },
     initialData: null,
+  });
+
+  // Ambil daftar pengguna hanya jika username adalah 'pengurusdesa'
+  const { data: allUsers } = useQuery({
+    queryKey: ["allUsers"],
+    queryFn: async () => {
+      const response = await axiosInstance.get("/messages/users");
+      return response.data;
+    },
+    enabled: authUser?.username === "pengurusdesa", // Hanya fetch data jika username cocok
   });
 
   const { data: recommendedData } = useQuery({
@@ -79,7 +90,6 @@ const HomePage = () => {
               <RecommendedUser key={user._id} user={user} />
             ))}
 
-            {/* 🔹 Pagination */}
             <div className="flex justify-center mt-6 gap-x-1">
               <button
                 className={`px-3 py-1 text-sm rounded-md transition-all ${
@@ -122,6 +132,7 @@ const HomePage = () => {
           </div>
         </div>
       )}
+      <VerifiedUsers authUser={authUser} allUsers={allUsers} />
     </div>
   );
 };

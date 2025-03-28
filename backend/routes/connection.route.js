@@ -1,13 +1,14 @@
 import express from "express";
 import { protectRoute } from "../middleware/auth.middleware.js";
 import {
-	acceptConnectionRequest,
-	getConnectionRequests,
-	getConnectionStatus,
-	getUserConnections,
-	rejectConnectionRequest,
-	removeConnection,
-	sendConnectionRequest,
+  acceptConnectionRequest,
+  getConnectionRequests,
+  getConnectionStatus,
+  getUserConnections,
+  rejectConnectionRequest,
+  removeConnection,
+  sendConnectionRequest,
+  getUserById,
 } from "../controllers/connection.controller.js";
 
 const router = express.Router();
@@ -21,5 +22,6 @@ router.get("/requests", protectRoute, getConnectionRequests);
 router.get("/", protectRoute, getUserConnections);
 router.delete("/:userId", protectRoute, removeConnection);
 router.get("/status/:userId", protectRoute, getConnectionStatus);
+router.get("/:userId", protectRoute, getUserById);
 
 export default router;

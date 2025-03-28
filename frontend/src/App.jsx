@@ -15,6 +15,7 @@ import WaitingApprovalPage from "./pages/WaitingApprovalPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import DashboardAdmin from "./pages/DashboardAdmin";
+import MessagesProfil from "./pages/MessagesProfil";
 
 import toast, { Toaster } from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
@@ -107,6 +108,10 @@ function AppContent() {
           <Route
             path="/messages"
             element={authUser ? <Messages /> : <Navigate to="/dashboard" />}
+          />
+          <Route
+            path="/messages/:id"
+            element={authUser ? <MessagesProfil /> : <Navigate to="/dashboard" />}
           />
           <Route
             path="/dashboardadmin"

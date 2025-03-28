@@ -33,7 +33,7 @@ const MessagesContent = () => {
 
   return (
     <div className="h-screen flex items-center justify-center">
-      <div className="bg-[#E6E6FA] rounded-3xl shadow-3xl w-full max-w-6xl h-[90vh] flex border border-white overflow-hidden">
+      <div className="bg-[#E6E6FA] rounded-3xl shadow-2xl w-full max-w-6xl h-[90vh] flex border border-white overflow-hidden">
         <SidebarChat
           socket={socket}
           className="transition-all duration-300 hover:scale-105 ease-out"

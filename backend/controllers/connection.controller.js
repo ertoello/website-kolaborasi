@@ -229,3 +229,18 @@ export const getConnectionStatus = async (req, res) => {
 		res.status(500).json({ message: "Server error" });
 	}
 };
+
+export const getUserById = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId).select(
+      "_id name email"
+    ); // Ambil hanya ID, nama, dan email
+    if (!user) {
+      return res.status(404).json({ message: "User tidak ditemukan" });
+    }
+    res.json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
