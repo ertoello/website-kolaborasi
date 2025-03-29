@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import LogoutModal from "./LogoutModal"; // Import komponen modal logout
+import MobileNavbar from "./MobileNavbar"; // Import komponen
 
 const Navbar = () => {
   const { data: authUser } = useQuery({
@@ -78,12 +79,12 @@ const Navbar = () => {
         </div>
 
         {/* Navigasi Ikon */}
-        <div className="flex items-center justify-end w-full px-6">
+        <div className="flex items-center justify-end w-full md:px-6">
           {authUser ? (
             <>
               {/* Search Bar dan Navigasi */}
               <div className="flex items-center gap-6 mx-auto">
-                <div className="relative w-64 md:w-80">
+                <div className="relative w-auto md:w-80">
                   <input
                     type="text"
                     placeholder="Cari komunitas, ide, inovasi..."
@@ -92,7 +93,7 @@ const Navbar = () => {
                     onChange={(e) => handleSearch(e.target.value)}
                   />
                   <Search
-                    className="absolute top-2 right-3 text-gray-500"
+                    className="absolute top-2 right-3 text-gray-500 hidden md:flex"
                     size={20}
                   />
 
@@ -103,7 +104,7 @@ const Navbar = () => {
                           <Link
                             key={user._id}
                             to={`/profile/${user.username}`}
-                            className="block px-4 py-2 hover:bg-gray-200 flex items-center space-x-2"
+                            className="px-4 py-2 hover:bg-gray-200 flex items-center space-x-2"
                           >
                             <img
                               className="h-8 w-8 rounded-full object-cover"
@@ -126,7 +127,7 @@ const Navbar = () => {
                 </div>
 
                 {/* Ikon Navigasi */}
-                <div className="flex items-center gap-4">
+                <div className="items-center gap-4 hidden md:flex">
                   <Link to="/" className="nav-icon">
                     <Home size={26} />
                   </Link>
@@ -153,10 +154,17 @@ const Navbar = () => {
                   </div>
                 </div>
               </div>
-
+              <MobileNavbar
+                authUser={authUser}
+                unreadNotificationCount={unreadNotificationCount}
+                unreadConnectionRequestsCount={unreadConnectionRequestsCount}
+              />
               {/* Profil & Logout */}
-              <div className="flex items-center gap-4">
-                <Link to={`/profile/${authUser.username}`}>
+              <div className="flex items-center md:gap-3 gap-1">
+                <Link
+                  to={`/profile/${authUser.username}`}
+                  // className="hidden md:flex"
+                >
                   <img
                     className="h-10 w-10 rounded-full object-cover border-2 border-gray-300"
                     src={authUser.profilePicture || "/avatar.png"}

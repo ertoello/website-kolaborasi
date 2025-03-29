@@ -7,6 +7,8 @@ import Post from "../components/Post";
 import { Users } from "lucide-react";
 import RecommendedUser from "../components/RecommendedUser";
 import VerifiedUsers from "../components/VerifiedUsers";
+import TermsAndConditions from "../components/TermsAndConditions";
+
 
 const HomePage = () => {
   const [page, setPage] = useState(1); // State untuk halaman saat ini
@@ -55,12 +57,14 @@ const HomePage = () => {
   console.log("posts", posts);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-      <div className="hidden lg:block lg:col-span-1">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="hidden lg:block lg:col-span-3">
         <Sidebar user={authUser} />
+        {/* Syarat dan Ketentuan berada di luar sidebar */}
+        <TermsAndConditions />
       </div>
 
-      <div className="col-span-1 lg:col-span-2 order-first lg:order-none">
+      <div className="col-span-1 lg:col-span-6 order-first lg:order-none">
         <PostCreation user={authUser} />
 
         {posts?.map((post) => (
@@ -83,9 +87,9 @@ const HomePage = () => {
       </div>
 
       {recommendedUsers?.length > 0 && (
-        <div className="col-span-1 lg:col-span-1 hidden lg:block">
+        <div className="col-span-3 lg:col-span-3 hidden lg:block">
           <div className="bg-secondary rounded-lg shadow p-4">
-            <h2 className="font-semibold mb-4">People you may know</h2>
+            <h2 className="font-semibold mb-4 text-sm text-center">Rekomendasi Teman Untuk Anda</h2>
             {recommendedUsers.map((user) => (
               <RecommendedUser key={user._id} user={user} />
             ))}

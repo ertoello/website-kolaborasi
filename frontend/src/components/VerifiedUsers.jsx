@@ -8,7 +8,7 @@ const VerifiedUsers = ({ authUser, allUsers }) => {
   if (authUser?.username !== "pengurusdesa") return null; // Hanya 'pengurusdesa' yang bisa lihat
 
   return (
-    <div className="col-span-1 lg:col-span-1 hidden lg:block">
+    <div className="col-span-3 lg:col-span-3 hidden lg:block">
       <div className="bg-[#FFFFFF] rounded-lg shadow-md p-4 border border-[#D7D7D7]">
         {/* 🔹 Header */}
         <h2 className="text-base font-bold text-gray-800 text-center mb-2">

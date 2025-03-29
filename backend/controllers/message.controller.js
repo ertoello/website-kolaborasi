@@ -10,7 +10,7 @@ export const getUsersForSidebar = async (req, res) => {
     const filteredUsers = await User.find({
       _id: { $ne: loggedInUserId },
     }).select(
-      "_id name nik username email connections profilePicture lastLogin"
+      "_id name nik username email connections profilePicture lastLogin isVerified isApproved"
     );
 
     res.status(200).json(filteredUsers);

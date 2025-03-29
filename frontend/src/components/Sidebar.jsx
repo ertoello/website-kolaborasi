@@ -20,7 +20,7 @@ export default function Sidebar({ user, onLogout }) {
     <div
       className={`bg-[#78C1E4] transition-all duration-300 rounded-xl shadow-xl  ${
         sidebarOpen ? "w-auto" : "w-20"
-      } min-h-screen h-auto flex flex-col p-2`}
+      } flex flex-col p-2`}
     >
       {/* Profile Card */}
       <ProfileCard user={user} sidebarOpen={sidebarOpen} />
@@ -52,7 +52,7 @@ export default function Sidebar({ user, onLogout }) {
 
       {/* Footer */}
       <div className="border-t border-[#D7D7D7] pt-3 mt-3">
-        <ThemeToggle sidebarOpen={sidebarOpen} />
+        {/* <ThemeToggle sidebarOpen={sidebarOpen} /> */}
         <SettingsDropdown onLogout={onLogout} sidebarOpen={sidebarOpen} />
         <button
           className="mt-3 flex items-center py-3 px-4 w-full rounded-lg bg-[#3FA3CE] text-white hover:bg-[#145C75] transition-all"
