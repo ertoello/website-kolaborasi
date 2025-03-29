@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { axiosInstance } from "../../lib/axios";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   Bell,
   Home,
@@ -12,20 +12,23 @@ import {
   XCircle,
 } from "lucide-react";
 import { useState } from "react";
+import LogoutModal from "./LogoutModal"; // Import komponen modal logout
+import MobileNavbar from "./MobileNavbar"; // Import komponen
 
 const Navbar = () => {
-  const { data: authUser } = useQuery({ queryKey: ["authUser"] });
+  const { data: authUser } = useQuery({
+    queryKey: ["authUser"],
+    queryFn: async () => {
+      const response = await axiosInstance.get("/auth/me");
+      return response.data;
+    },
+    initialData: null, // Bisa juga diisi dengan data default dari localStorage
+  });
+
   const queryClient = useQueryClient();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-
-  // Fungsi untuk disconnect socket
-  const disconnectSocket = () => {
-    if (window.socket?.connected) {
-      window.socket.disconnect();
-    }
-  };
 
   // Fungsi pencarian
   const handleSearch = async (query) => {
@@ -56,37 +59,17 @@ const Navbar = () => {
     enabled: !!authUser,
   });
 
-  const { mutate: logout } = useMutation({
-    mutationFn: () => axiosInstance.post("/auth/logout"),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["authUser"] });
-    },
-  });
-
-  // Fungsi logout dengan disconnect socket & clear localStorage
-  const handleLogout = () => {
-    disconnectSocket(); // Putuskan koneksi socket
-    localStorage.clear(); // Hapus semua data di localStorage
-    sessionStorage.clear(); // Hapus semua data di sessionStorage (jika ada)
-    // Menghapus cookies jika ada
-    document.cookie.split(";").forEach(function (cookie) {
-      document.cookie = cookie
-        .replace(/^ +/, "")
-        .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-    });
-    logout(); // Logout dari server
-  };
-
   const unreadNotificationCount = notifications?.data?.filter(
     (notif) => !notif.read
   ).length;
   const unreadConnectionRequestsCount = connectionRequests?.data?.length;
+  const location = useLocation();
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-10 border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 flex justify-around items-center py-3">
         <div className="flex items-center space-x-4">
-          <Link to="/">
+          <Link to="/dashboard">
             <img
               className="h-10 rounded-full"
               src="/logopanjang.png"
@@ -96,12 +79,12 @@ const Navbar = () => {
         </div>
 
         {/* Navigasi Ikon */}
-        <div className="flex items-center justify-end w-full px-6">
+        <div className="flex items-center justify-end w-full md:px-6">
           {authUser ? (
             <>
               {/* Search Bar dan Navigasi */}
               <div className="flex items-center gap-6 mx-auto">
-                <div className="relative w-64 md:w-80">
+                <div className="relative w-auto md:w-80">
                   <input
                     type="text"
                     placeholder="Cari komunitas, ide, inovasi..."
@@ -110,7 +93,7 @@ const Navbar = () => {
                     onChange={(e) => handleSearch(e.target.value)}
                   />
                   <Search
-                    className="absolute top-2 right-3 text-gray-500"
+                    className="absolute top-2 right-3 text-gray-500 hidden md:flex"
                     size={20}
                   />
 
@@ -121,7 +104,7 @@ const Navbar = () => {
                           <Link
                             key={user._id}
                             to={`/profile/${user.username}`}
-                            className="block px-4 py-2 hover:bg-gray-200 flex items-center space-x-2"
+                            className="px-4 py-2 hover:bg-gray-200 flex items-center space-x-2"
                           >
                             <img
                               className="h-8 w-8 rounded-full object-cover"
@@ -144,7 +127,7 @@ const Navbar = () => {
                 </div>
 
                 {/* Ikon Navigasi */}
-                <div className="flex items-center gap-4">
+                <div className="items-center gap-4 hidden md:flex">
                   <Link to="/" className="nav-icon">
                     <Home size={26} />
                   </Link>
@@ -171,29 +154,53 @@ const Navbar = () => {
                   </div>
                 </div>
               </div>
-
+              <MobileNavbar
+                authUser={authUser}
+                unreadNotificationCount={unreadNotificationCount}
+                unreadConnectionRequestsCount={unreadConnectionRequestsCount}
+              />
               {/* Profil & Logout */}
-              <div className="flex items-center gap-4">
-                <Link to={`/profile/${authUser.username}`}>
+              <div className="flex items-center md:gap-3 gap-1">
+                <Link
+                  to={`/profile/${authUser.username}`}
+                  // className="hidden md:flex"
+                >
                   <img
                     className="h-10 w-10 rounded-full object-cover border-2 border-gray-300"
                     src={authUser.profilePicture || "/avatar.png"}
                     alt={authUser.name}
                   />
                 </Link>
-                <button onClick={handleLogout} className="nav-icon">
-                  <LogOut size={26} />
-                </button>
+                <LogoutModal /> {/* Gunakan LogoutModal di sini */}
               </div>
             </>
           ) : (
             <>
               <div className="flex items-center space-x-4">
-                <Link to="/login" className="btn-primary">
-                  Sign In
+                {/* Tombol Sign In */}
+                <Link
+                  to="/login"
+                  className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold transition-all duration-300 hover:scale-105 
+      ${
+        location.pathname === "/login"
+          ? "text-white bg-[#3FA3CE] shadow-md" // Jika aktif
+          : "text-[#3FA3CE] border-2 border-[#3FA3CE] shadow-sm hover:bg-[#3FA3CE] hover:text-white" // Jika tidak aktif
+      }`}
+                >
+                  <span>Sign In</span>
                 </Link>
-                <Link to="/signup" className="btn-secondary">
-                  Join Now
+
+                {/* Tombol Join Now */}
+                <Link
+                  to="/signup"
+                  className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold transition-all duration-300 hover:scale-105 
+      ${
+        location.pathname === "/signup"
+          ? "text-white bg-gray-400 shadow-md" // Jika aktif
+          : "text-gray-700 border-2 border-gray-400 shadow-sm hover:bg-gray-400 hover:text-white" // Jika tidak aktif
+      }`}
+                >
+                  <span>Join Now</span>
                 </Link>
               </div>
             </>

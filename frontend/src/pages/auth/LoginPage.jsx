@@ -5,16 +5,8 @@ import LoginForm from "../../components/auth/LoginForm";
 import FloatingShape from "../../components/FloatingShape";
 
 const LoginPage = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Login attempt with:", { email, password });
-  };
-
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[#F4F4F4]">
+    <div className="flex items-center justify-center min-h-screen">
       <FloatingShape
         color="bg-[#3FA3CE]" // Biru Muda
         size="w-64 h-64"

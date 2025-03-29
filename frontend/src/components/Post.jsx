@@ -11,7 +11,14 @@ import PostAction from "./PostAction";
 const Post = ({ post }) => {
 	const { postId } = useParams();
 
-	const { data: authUser } = useQuery({ queryKey: ["authUser"] });
+	const { data: authUser } = useQuery({
+		queryKey: ["authUser"],
+		queryFn: async () => {
+		  const response = await axiosInstance.get("/auth/me");
+		  return response.data;
+		},
+		initialData: null, // Bisa juga diisi dengan data default dari localStorage
+	  });
 	const [showComments, setShowComments] = useState(false);
 	const [newComment, setNewComment] = useState("");
 	const [comments, setComments] = useState(post.comments || []);

@@ -7,7 +7,7 @@ import {
   verifyEmail,
   forgotPassword,
   resetPassword,
-  checkAuth,
+  approveUser,
 } from "../controllers/auth.controller.js";
 import { protectRoute } from "../middleware/auth.middleware.js";
 
@@ -23,5 +23,6 @@ router.post("/forgot-password", forgotPassword);
 router.post("/reset-password/:token", resetPassword);
 
 router.get("/me", protectRoute, getCurrentUser);
+router.put("/users/:userId/confirm", protectRoute, approveUser);
 
 export default router;

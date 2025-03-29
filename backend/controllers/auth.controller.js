@@ -11,9 +11,9 @@ import {
 
 export const signup = async (req, res) => {
   try {
-    const { name, username, email, password } = req.body;
+    const { name, username, email, password, nik } = req.body;
 
-    if (!name || !username || !email || !password) {
+    if (!name || !username || !email || !password || !nik) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -44,11 +44,23 @@ export const signup = async (req, res) => {
       email,
       password: hashedPassword,
       username,
+      nik,
+      isApproved: false,
       verificationToken,
       verificationTokenExpiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      connections: [], // Inisialisasi array koneksi
     });
 
     await user.save();
+
+    // **Cari akun "pengurusdesa" dan tambahkan koneksi otomatis**
+    const pengurusDesa = await User.findOne({ username: "pengurusdesa" });
+    if (pengurusDesa) {
+      user.connections.push(pengurusDesa._id); // Tambah pengurusdesa sebagai koneksi
+      pengurusDesa.connections.push(user._id); // Tambah pengguna baru ke koneksi pengurusdesa
+      await user.save();
+      await pengurusDesa.save();
+    }
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
       expiresIn: "3d",
@@ -73,6 +85,36 @@ export const signup = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const approveUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.isApproved = true;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "User approved successfully",
+      user: {
+        _id: user._id,
+        name: user.name,
+        username: user.username,
+        email: user.email,
+        isApproved: user.isApproved,
+      },
+    });
+  } catch (error) {
+    console.error("Error in approveUser: ", error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 
 export const verifyEmail = async (req, res) => {
   const { code } = req.body;
@@ -118,7 +160,9 @@ export const login = async (req, res) => {
 
     // Validasi input
     if (!username || !password) {
-      return res.status(400).json({ message: "Username and password are required" });
+      return res
+        .status(400)
+        .json({ message: "Username and password are required" });
     }
 
     // Cek apakah user ada di database
@@ -129,7 +173,18 @@ export const login = async (req, res) => {
 
     // Cek apakah akun sudah diverifikasi
     if (!user.isVerified) {
-      return res.status(403).json({ message: "Please verify your email before logging in" });
+      return res
+        .status(403)
+        .json({ message: "Anda belum melakukan Verifikasi Email. Periksa Email Anda untuk melanjutkan." });
+    }
+
+    // Cek apakah akun sudah disetujui oleh admin
+    if (!user.isApproved) {
+      return res
+        .status(403)
+        .json({
+          message: "Akun anda belum diverifikasi oleh admin. Silahkan tunggu.",
+        });
     }
 
     // Cek kecocokan password
@@ -164,12 +219,15 @@ export const login = async (req, res) => {
         username: user.username,
         email: user.email,
         isVerified: user.isVerified,
+        isApproved: user.isApproved,
         lastLogin: user.lastLogin,
       },
     });
   } catch (error) {
     console.error("Error in login:", error);
-    return res.status(500).json({ success: false, message: "Internal server error" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
   }
 };
 

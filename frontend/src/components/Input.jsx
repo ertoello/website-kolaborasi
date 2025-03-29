@@ -6,8 +6,8 @@ const Input = ({ icon: Icon, ...props }) => {
       </div>
       <input
         {...props}
-        className="w-full pl-10 pr-3 py-2 bg-[#3E3E3E] bg-opacity-50 rounded-lg border border-[#525252] 
-				focus:border-[#EF8B8B] focus:ring-2 focus:ring-[#EF8B8B] text-[#FFFFFF] placeholder-[#A8A8A8] transition duration-200"
+        className="w-full pl-10 pr-3 py-2 bg-[#ffffff] bg-opacity-50 rounded-lg border border-[#525252] 
+				focus:border-[#EF8B8B] focus:ring-2 focus:ring-[#EF8B8B] text-gray-800 placeholder-[#A8A8A8] transition duration-200"
       />
     </div>
   );

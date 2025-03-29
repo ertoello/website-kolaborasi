@@ -11,65 +11,54 @@ const io = new Server(server, {
   },
 });
 
+const userSocketMap = {}; // { userId: socketId }
+
+// Fungsi untuk mendapatkan socket ID penerima
 export function getReceiverSocketId(userId) {
-  return userSocketMap[userId];
+  return userSocketMap[userId] || null;
 }
 
-const userSocketMap = {}; // { userId: [socketId1, socketId2] }
-
+// Event ketika user terhubung ke socket
 io.on("connection", (socket) => {
-  console.log("A user connected:", socket.id);
+  console.log(`✅ User connected: ${socket.id}`);
 
-  // Ambil userId dari query saat koneksi dibuat
-  const userId = socket.handshake.query.userId;
-  console.log("Received userId from frontend:", userId); // Debugging apakah userId diterima
+  try {
+    // Ambil userId dari query yang dikirim frontend
+    const userId = socket.handshake.query.userId;
 
-  if (userId) {
-    if (!userSocketMap[userId]) {
-      userSocketMap[userId] = [];
-    }
-    userSocketMap[userId].push(socket.id);
-    console.log(
-      `User ${userId} is now connected with socket:`,
-      userSocketMap[userId]
-    );
-  } else {
-    console.log("⚠️ Warning: No userId received from frontend!");
-  }
-
-  // Kirim daftar user yang online saat ada user baru masuk
-  io.emit("getOnlineUsers", Object.keys(userSocketMap));
-  console.log("Current Online Users:", Object.keys(userSocketMap)); // Debugging daftar user online
-
-  // Tangani permintaan daftar user online dari frontend
-  socket.on("requestOnlineUsers", () => {
-    console.log("Frontend requested online users list.");
-    socket.emit("getOnlineUsers", Object.keys(userSocketMap));
-  });
-
-  socket.on("disconnect", () => {
-    console.log("A user disconnected:", socket.id);
-
-    if (userId && userSocketMap[userId]) {
-      userSocketMap[userId] = userSocketMap[userId].filter(
-        (id) => id !== socket.id
-      );
-
-      if (userSocketMap[userId].length === 0) {
-        console.log(
-          `User ${userId} has no active sockets, removing from online list.`
-        );
-        delete userSocketMap[userId];
-      }
+    if (!userId) {
+      console.warn("⚠️ Warning: No userId received from frontend!");
+      return;
     }
 
+    // Simpan userId dan socket ID ke dalam userSocketMap
+    userSocketMap[userId] = socket.id;
+    console.log(`🔵 User ${userId} is now online.`);
+
+    // Kirim daftar user yang online ke semua client
     io.emit("getOnlineUsers", Object.keys(userSocketMap));
-    console.log(
-      "Updated Online Users after disconnect:",
-      Object.keys(userSocketMap)
-    ); // Debugging daftar user online setelah disconnect
-  });
-});
 
+    // Event untuk permintaan daftar user online
+    socket.on("requestOnlineUsers", () => {
+      socket.emit("getOnlineUsers", Object.keys(userSocketMap));
+    });
+
+    // Event ketika user disconnect
+    socket.on("disconnect", () => {
+      console.log(`❌ User disconnected: ${socket.id}`);
+
+      // Hapus user dari daftar online jika socket ID cocok
+      if (userSocketMap[userId] === socket.id) {
+        delete userSocketMap[userId];
+        console.log(`🔴 User ${userId} removed from online list.`);
+      }
+
+      // Perbarui daftar user online untuk semua client
+      io.emit("getOnlineUsers", Object.keys(userSocketMap));
+    });
+  } catch (error) {
+    console.error("❌ Error in socket connection:", error);
+  }
+});
 
 export { io, app, server };

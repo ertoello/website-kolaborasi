@@ -6,25 +6,43 @@ import { io } from "socket.io-client"; // Import socket.io-client
 export const useChatStore = create((set, get) => ({
   messages: [],
   users: [],
-  onlineUsers: [], // Tambahkan state untuk menyimpan user yang online
+  onlineUsers: [], // Menyimpan daftar pengguna yang online
   selectedUser: null,
   isUsersLoading: false,
   isMessagesLoading: false,
-  socket: null, // Tambahkan state socket
+  socket: null, // State socket
 
-  initSocket: () => {
-    const socket = io("http://localhost:5000"); // Ganti dengan URL backend-mu
+  initSocket: (authUser) => {
+    if (!authUser?._id) return; // Pastikan user sudah login sebelum menghubungkan socket
+
+    if (get().socket) return; // Hindari membuat socket baru jika sudah ada
+
+    const socket = io("http://localhost:5000", {
+      query: { userId: authUser._id }, // Kirim ID user ke server saat koneksi dibuat
+    });
+
     set({ socket });
 
     socket.on("connect", () => {
-      console.log("Socket terhubung!");
+      console.log("Socket terhubung dengan ID:", socket.id);
     });
 
     socket.on("disconnect", () => {
       console.log("Socket terputus!");
     });
 
-    // Event listener untuk mendapatkan user yang online
+    // Perbarui daftar pengguna online secara otomatis
+    socket.on("getOnlineUsers", (userIds) => {
+      set({ onlineUsers: userIds });
+    });
+
+    console.log("Socket diinisialisasi untuk user:", authUser._id);
+  },
+
+  setOnlineUsersListener: () => {
+    const socket = get().socket;
+    if (!socket) return;
+
     socket.on("getOnlineUsers", (userIds) => {
       set({ onlineUsers: userIds });
     });
@@ -33,7 +51,7 @@ export const useChatStore = create((set, get) => ({
   getUsers: async () => {
     set({ isUsersLoading: true });
     try {
-      const res = await axiosInstance.get("/messages/users");
+      const res = await axiosInstance.get("/connections");
       set({ users: res.data });
     } catch (error) {
       toast.error(error.response.data.message);
@@ -51,6 +69,15 @@ export const useChatStore = create((set, get) => ({
       toast.error(error.response.data.message);
     } finally {
       set({ isMessagesLoading: false });
+    }
+  },
+
+  getUserById: async (userId) => {
+    try {
+      const res = await axios.get(`/connections/${userId}`);
+      set({ selectedUser: res.data }); // Hanya simpan 1 user berdasarkan ID
+    } catch (error) {
+      console.error("Error fetching user:", error);
     }
   },
 
@@ -78,7 +105,6 @@ export const useChatStore = create((set, get) => ({
 
     socket.on("newMessage", (newMessage) => {
       if (newMessage.senderId !== selectedUser._id) return;
-
       set({ messages: [...get().messages, newMessage] });
     });
   },

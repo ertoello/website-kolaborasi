@@ -14,7 +14,7 @@ export default function ThemeToggle({ sidebarOpen }) {
   return (
     <button
       onClick={() => setDarkMode(!darkMode)}
-      className="flex items-center py-2 px-4 w-full rounded-md bg-gray-200 dark:bg-gray-800 transition-colors"
+      className="flex items-center py-2 px-4 w-full rounded-md bg-gray-200 dark:bg-gray-800 dark:text-white transition-colors"
     >
       {darkMode ? <Sun size={20} /> : <Moon size={20} />}
       {sidebarOpen && (
