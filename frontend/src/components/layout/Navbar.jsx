@@ -72,7 +72,7 @@ const Navbar = () => {
           <Link to="/dashboard">
             <img
               className="h-10 rounded-full"
-              src="/logopanjang.png"
+              src="/logopanjang1.png"
               alt="Kolaborasi"
             />
           </Link>

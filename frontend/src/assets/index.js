@@ -29,7 +29,7 @@ import villageTech from "./villageTech.png";
 import innovation from "./innovation.png";
 import overlay1 from "./overlay1.jpg";
 import overlay2 from "./overlay2.jpg";
-import logobeopoeng from "./logopanjang.png";
+import logobeopoeng from "./logopanjang1.png";
 import chatfeature from "./chat-feature.png";
 
 
