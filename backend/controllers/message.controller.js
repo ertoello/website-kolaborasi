@@ -3,6 +3,8 @@ import Message from "../models/message.model.js";
 
 import cloudinary from "../lib/cloudinary.js";
 import { getReceiverSocketId, io } from "../lib/socket.js";
+import Notification from "../models/notification.model.js";
+
 
 export const getUsersForSidebar = async (req, res) => {
   try {
@@ -59,6 +61,15 @@ export const sendMessage = async (req, res) => {
     });
 
     await newMessage.save();
+
+    // Buat notifikasi untuk si penerima
+    const newNotification = new Notification({
+      recipient: receiverId,
+      type: "message",
+      relatedUser: senderId,
+    });
+
+    await newNotification.save();
 
     const receiverSocketId = getReceiverSocketId(receiverId);
     if (receiverSocketId) {

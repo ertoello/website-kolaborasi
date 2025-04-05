@@ -59,9 +59,20 @@ const Navbar = () => {
     enabled: !!authUser,
   });
 
+  const { data: unreadMessagesCount } = useQuery({
+    queryKey: ["unreadMessagesCount"],
+    queryFn: async () => {
+      const response = await axiosInstance.get("/notifications/count/message");
+      return response.data;
+    },
+    enabled: !!authUser,
+  });
+
+
   const unreadNotificationCount = notifications?.data?.filter(
-    (notif) => !notif.read
+    (notif) => !notif.read && notif.type !== "message"
   ).length;
+
   const unreadConnectionRequestsCount = connectionRequests?.data?.length;
   const location = useLocation();
 
@@ -139,9 +150,16 @@ const Navbar = () => {
                       </span>
                     )}
                   </Link>
-                  <Link to="/messages" className="nav-icon">
-                    <MessageCircle size={26} />
-                  </Link>
+                  <div className="relative">
+                    <Link to="/messages" className="nav-icon">
+                      <MessageCircle size={26} />
+                    </Link>
+                    {unreadMessagesCount?.count > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-2 py-1">
+                        {unreadMessagesCount.count}
+                      </span>
+                    )}
+                  </div>
                   <div className="relative">
                     <Link to="/notifications" className="nav-icon">
                       <Bell size={26} />
@@ -158,6 +176,7 @@ const Navbar = () => {
                 authUser={authUser}
                 unreadNotificationCount={unreadNotificationCount}
                 unreadConnectionRequestsCount={unreadConnectionRequestsCount}
+                unreadMessagesCount={unreadMessagesCount?.count}
               />
               {/* Profil & Logout */}
               <div className="flex items-center md:gap-3 gap-1">

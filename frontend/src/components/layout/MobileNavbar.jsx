@@ -6,6 +6,7 @@ const MobileNavbar = ({
   authUser,
   unreadNotificationCount,
   unreadConnectionRequestsCount,
+  unreadMessagesCount,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -57,6 +58,11 @@ const MobileNavbar = ({
             onClick={() => setIsOpen(false)}
           >
             <MessageCircle size={24} /> Messages
+            {unreadMessagesCount > 0 && (
+              <span className="bg-red-500 text-white text-xs rounded-full px-2 ml-2">
+                {unreadMessagesCount}
+              </span>
+            )}
           </Link>
           <Link
             to="/notifications"

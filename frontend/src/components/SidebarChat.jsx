@@ -3,12 +3,44 @@ import { useEffect, useState, useMemo, useCallback } from "react";
 import { useChatStore } from "../store/useChatStore";
 import SidebarSkeleton from "./skeletons/SidebarSkeleton";
 import { Users } from "lucide-react";
+import { axiosInstance } from "../lib/axios";
+
 
 const SidebarChat = () => {
   const queryClient = useQueryClient();
   const { getUsers, users, selectedUser, setSelectedUser, isUsersLoading, onlineUsers} =
     useChatStore();
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
+  const [unreadCounts, setUnreadCounts] = useState({});
+
+  useEffect(() => {
+    const fetchUnreadCounts = async () => {
+      const counts = {};
+
+      for (const user of users) {
+        try {
+          const res = await axiosInstance.get(
+            `/notifications/messages/unread-count/${user._id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
+          counts[user._id] = res.data.count;
+        } catch (error) {
+          console.error("Gagal fetch unread count:", error);
+        }
+      }
+
+      setUnreadCounts(counts);
+    };
+
+    if (users.length > 0) {
+      fetchUnreadCounts();
+    }
+  }, [users]);
+
 
   useEffect(() => {
     getUsers();
@@ -23,7 +55,23 @@ const SidebarChat = () => {
   );
 
   const handleSelectUser = useCallback(
-    (user) => setSelectedUser(user),
+    async (user) => {
+      try {
+        // Panggil API untuk mark semua pesan dari sender ini sebagai read
+        await axiosInstance.put(`/notifications/message/read/${user._id}`);
+
+        // Set user yang sedang dipilih
+        setSelectedUser(user);
+
+        // Hapus badge count-nya (set jadi 0)
+        setUnreadCounts((prev) => ({
+          ...prev,
+          [user._id]: 0,
+        }));
+      } catch (error) {
+        console.error("Error marking messages as read:", error);
+      }
+    },
     [setSelectedUser]
   );
 
@@ -74,6 +122,12 @@ const SidebarChat = () => {
                 alt={user.name}
                 className="size-12 object-cover rounded-full"
               />
+              {unreadCounts[user._id] > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs px-1.5 py-0.5 rounded-full">
+                  {unreadCounts[user._id]}
+                </span>
+              )}
+              
               {onlineUsers.includes(user._id) && (
                 <span
                   className="absolute bottom-0 right-0 size-3 bg-green-500 
