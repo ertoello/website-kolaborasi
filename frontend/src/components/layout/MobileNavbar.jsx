@@ -45,7 +45,7 @@ const MobileNavbar = ({
             className="flex items-center gap-2 relative"
             onClick={() => setIsOpen(false)}
           >
-            <Users size={24} /> Network
+            <Users size={24} /> Kolaborasi / Cari Partner
             {unreadConnectionRequestsCount > 0 && (
               <span className="bg-red-500 text-white text-xs rounded-full px-2 ml-2">
                 {unreadConnectionRequestsCount}
@@ -57,7 +57,7 @@ const MobileNavbar = ({
             className="flex items-center gap-2"
             onClick={() => setIsOpen(false)}
           >
-            <MessageCircle size={24} /> Messages
+            <MessageCircle size={24} /> Forum Diskusi / Obrolan Proyek
             {unreadMessagesCount > 0 && (
               <span className="bg-red-500 text-white text-xs rounded-full px-2 ml-2">
                 {unreadMessagesCount}
@@ -69,7 +69,7 @@ const MobileNavbar = ({
             className="flex items-center gap-2 relative"
             onClick={() => setIsOpen(false)}
           >
-            <Bell size={24} /> Notifications
+            <Bell size={24} /> Notifikasi
             {unreadNotificationCount > 0 && (
               <span className="bg-red-500 text-white text-xs rounded-full px-2 ml-2">
                 {unreadNotificationCount}
@@ -86,7 +86,7 @@ const MobileNavbar = ({
               src={authUser?.profilePicture || "/avatar.png"}
               alt={authUser?.name}
             />
-            Profile
+            Profil & Portofolio
           </Link>
         </div>
       </div>

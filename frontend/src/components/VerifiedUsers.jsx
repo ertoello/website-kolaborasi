@@ -5,10 +5,11 @@ import { User } from "lucide-react"; // Import ikon
 const VerifiedUsers = ({ authUser, allUsers }) => {
   const navigate = useNavigate();
 
-  if (authUser?.username !== "pengurusdesa") return null; // Hanya 'pengurusdesa' yang bisa lihat
+  // Hanya user dengan role 'admin' yang bisa melihat komponen ini
+  if (authUser?.role !== "admin") return null;
 
   return (
-    <div className="col-span-3 lg:col-span-3 hidden lg:block">
+    <div className="col-span-3 lg:col-span-3 hidden lg:block mt-4">
       <div className="bg-[#FFFFFF] rounded-lg shadow-md p-4 border border-[#D7D7D7]">
         {/* 🔹 Header */}
         <h2 className="text-base font-bold text-gray-800 text-center mb-2">
@@ -17,7 +18,7 @@ const VerifiedUsers = ({ authUser, allUsers }) => {
         <p className="text-sm text-[#525252] text-center mb-3">
           Total:{" "}
           <span className="font-semibold text-[#3FA3CE]">
-            {allUsers?.length || 0}
+            {allUsers?.length || "Error"}
           </span>{" "}
           Users
         </p>

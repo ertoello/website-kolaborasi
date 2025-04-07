@@ -5,17 +5,29 @@ import { sendCommentNotificationEmail } from "../emails/emailHandlers.js";
 import User from "../models/user.model.js";
 
 export const getFeedPosts = async (req, res) => {
-	try {
-		const posts = await Post.find({ author: { $in: [...req.user.connections, req.user._id] } })
-			.populate("author", "name username profilePicture headline")
-			.populate("comments.user", "name profilePicture")
-			.sort({ createdAt: -1 });
+  try {
+    const { category } = req.query; // ← ambil query string dari URL
 
-		res.status(200).json(posts);
-	} catch (error) {
-		console.error("Error in getFeedPosts controller:", error);
-		res.status(500).json({ message: "Server error" });
-	}
+    // base filter: hanya ambil post dari koneksi dan user itu sendiri
+    const filter = {
+      author: { $in: [...req.user.connections, req.user._id] },
+    };
+
+    // kalau ada kategori, tambahkan filter kategori
+    if (category) {
+      filter.category = category;
+    }
+
+    const posts = await Post.find(filter)
+      .populate("author", "name username profilePicture headline")
+      .populate("comments.user", "name profilePicture")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(posts);
+  } catch (error) {
+    console.error("Error in getFeedPosts controller:", error);
+    res.status(500).json({ message: "Server error" });
+  }
 };
 
 export const createPost = async (req, res) => {

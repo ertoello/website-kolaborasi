@@ -6,7 +6,11 @@ import toast from "react-hot-toast";
 const DashboardAdmin = () => {
   const queryClient = useQueryClient();
   const [editingUser, setEditingUser] = useState(null);
-  const [editData, setEditData] = useState({ name: "", username: "" });
+  const [editData, setEditData] = useState({
+    name: "",
+    username: "",
+    role: "",
+  });
   const [deleteUserId, setDeleteUserId] = useState(null);
   const [confirmUserId, setConfirmUserId] = useState(null);
 
@@ -71,7 +75,7 @@ const DashboardAdmin = () => {
 
   const handleEdit = (user) => {
     setEditingUser(user._id);
-    setEditData({ name: user.name, username: user.username });
+    setEditData({ name: user.name, username: user.username, role: user.role });
   };
 
   const handleSave = () => {
@@ -163,6 +167,35 @@ const DashboardAdmin = () => {
                       <span>{user.connections.length} Koneksi</span>
                     ) : (
                       <span className="text-gray-500">Belum Ada Koneksi</span>
+                    )}
+                  </td>
+                </tr>
+                <tr className="border-b">
+                  <td className="p-1 font-bold">Role</td>
+                  <td className="p-1">
+                    {editingUser === user._id ? (
+                      <select
+                        value={editData.role}
+                        onChange={(e) =>
+                          setEditData({ ...editData, role: e.target.value })
+                        }
+                        className="border p-1 rounded w-full"
+                      >
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                      </select>
+                    ) : (
+                      <div className="mt-2 text-left">
+                        <span
+                          className={`inline-block px-2 py-1 text-md rounded-md font-bold ${
+                            user.role === "admin"
+                              ? "bg-red-100 text-red-800"
+                              : "bg-blue-100 text-blue-800"
+                          }`}
+                        >
+                          {user.role || "Tidak Ada Role"}
+                        </span>
+                      </div>
                     )}
                   </td>
                 </tr>

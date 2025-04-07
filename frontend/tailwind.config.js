@@ -1,4 +1,5 @@
 import daisyui from "daisyui";
+import typography from "@tailwindcss/typography";
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -15,22 +16,32 @@ export default {
           "100%": { boxShadow: "0 0 10px rgba(10, 102, 194, 0.5)" },
         },
       },
+      typography: (theme) => ({
+        DEFAULT: {
+          css: {
+            p: { marginBottom: "1rem" },
+            ol: { paddingLeft: "1.5rem", listStyleType: "decimal" },
+            ul: { paddingLeft: "1.5rem", listStyleType: "disc" },
+            '[style*="text-align:center"]': { textAlign: "center" },
+          },
+        },
+      }),
     },
   },
-  plugins: [daisyui],
+  plugins: [daisyui, typography],
   daisyui: {
     themes: [
       {
         linkedin: {
-          primary: "#0A66C2", // LinkedIn Blue
-          secondary: "#FFFFFF", // White
-          accent: "#7FC15E", // LinkedIn Green (for accents)
-          neutral: "#000000", // Black (for text)
-          "base-100": "#F3F2EF", // Light Gray (background)
-          info: "#5E5E5E", // Dark Gray (for secondary text)
-          success: "#057642", // Dark Green (for success messages)
-          warning: "#F5C75D", // Yellow (for warnings)
-          error: "#CC1016", // Red (for errors)
+          primary: "#0A66C2",
+          secondary: "#FFFFFF",
+          accent: "#7FC15E",
+          neutral: "#000000",
+          "base-100": "#F3F2EF",
+          info: "#5E5E5E",
+          success: "#057642",
+          warning: "#F5C75D",
+          error: "#CC1016",
         },
       },
     ],

@@ -9,10 +9,10 @@ import RecommendedUser from "../components/RecommendedUser";
 import VerifiedUsers from "../components/VerifiedUsers";
 import TermsAndConditions from "../components/TermsAndConditions";
 
-
 const HomePage = () => {
   const [page, setPage] = useState(1); // State untuk halaman saat ini
   const limit = 7; // Jumlah pengguna per halaman
+  const [category, setCategory] = useState("all");
 
   const { data: authUser } = useQuery({
     queryKey: ["authUser"],
@@ -44,9 +44,11 @@ const HomePage = () => {
   });
 
   const { data: posts } = useQuery({
-    queryKey: ["posts"],
+    queryKey: ["posts", category],
     queryFn: async () => {
-      const res = await axiosInstance.get("/posts");
+      const endpoint =
+        category === "all" ? "/posts" : `/posts?category=${category}`;
+      const res = await axiosInstance.get(endpoint);
       return res.data;
     },
   });
@@ -66,6 +68,28 @@ const HomePage = () => {
 
       <div className="col-span-1 lg:col-span-6 order-first lg:order-none">
         <PostCreation user={authUser} />
+        <div className="flex justify-start gap-4 mb-4">
+          <button
+            onClick={() => setCategory("all")}
+            className={`px-4 py-2 rounded ${
+              category === "all"
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200 text-gray-800"
+            }`}
+          >
+            Semua
+          </button>
+          <button
+            onClick={() => setCategory("penting")}
+            className={`px-4 py-2 rounded ${
+              category === "penting"
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200 text-gray-800"
+            }`}
+          >
+            Info Penting
+          </button>
+        </div>
 
         {posts?.map((post) => (
           <Post key={post._id} post={post} />
@@ -89,7 +113,9 @@ const HomePage = () => {
       {recommendedUsers?.length > 0 && (
         <div className="col-span-3 lg:col-span-3 hidden lg:block">
           <div className="bg-secondary rounded-lg shadow p-4">
-            <h2 className="font-semibold mb-4 text-sm text-center">Rekomendasi Teman Untuk Anda</h2>
+            <h2 className="font-semibold mb-4 text-sm text-center">
+              Rekomendasi Teman Untuk Anda
+            </h2>
             {recommendedUsers.map((user) => (
               <RecommendedUser key={user._id} user={user} />
             ))}
