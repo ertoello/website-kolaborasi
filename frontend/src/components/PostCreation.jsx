@@ -123,8 +123,8 @@ const PostCreation = ({ user }) => {
           className="size-12 rounded-full"
         />
         <article className="mt-4">
-          <label className="block mb-2 text-sm font-semibold text-gray-700 text-center">
-            Tulis narasi, ide, atau informasi yang ingin Anda bagikan
+          <label className="block mb-2 text-sm font-semibold text-gray-700">
+            Kirim Postingan
           </label>
           <div className="rounded-xl overflow-hidden shadow-sm border border-gray-300 focus-within:ring-2 focus-within:ring-primary transition-all duration-300 bg-white">
             <ReactQuill
@@ -132,7 +132,7 @@ const PostCreation = ({ user }) => {
               value={content}
               onChange={setContent}
               placeholder="Bagikan sesuatu yang bermanfaat atau inspiratif..."
-              className="min-h-[150px] text-base"
+              className="text-base custom-editor"
               modules={{
                 toolbar: {
                   container: [
@@ -142,9 +142,6 @@ const PostCreation = ({ user }) => {
                     [{ color: [] }, { background: [] }],
                     [{ script: "sub" }, { script: "super" }],
                     [{ list: "ordered" }, { list: "bullet" }],
-                    [{ indent: "-1" }, { indent: "+1" }],
-                    [{ direction: "rtl" }],
-                    [{ align: [] }],
                     ["blockquote", "code-block"],
                     ["link"],
                     ["clean"],
@@ -167,9 +164,6 @@ const PostCreation = ({ user }) => {
                 "script",
                 "list",
                 "bullet",
-                "indent",
-                "direction",
-                "align",
                 "blockquote",
                 "code-block",
                 "link",

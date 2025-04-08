@@ -30,7 +30,7 @@ const HomePage = () => {
       const response = await axiosInstance.get("/messages/users");
       return response.data;
     },
-    enabled: authUser?.username === "pengurusdesa", // Hanya fetch data jika username cocok
+    enabled: authUser?.role === "admin", // Hanya fetch data jika username cocok
   });
 
   const { data: recommendedData } = useQuery({
@@ -73,7 +73,7 @@ const HomePage = () => {
             onClick={() => setCategory("all")}
             className={`px-4 py-2 rounded ${
               category === "all"
-                ? "bg-blue-600 text-white"
+                ? "bg-[#3FA3CE] text-white"
                 : "bg-gray-200 text-gray-800"
             }`}
           >
@@ -83,11 +83,11 @@ const HomePage = () => {
             onClick={() => setCategory("penting")}
             className={`px-4 py-2 rounded ${
               category === "penting"
-                ? "bg-blue-600 text-white"
+                ? "bg-[#3FA3CE] text-white"
                 : "bg-gray-200 text-gray-800"
             }`}
           >
-            Info Penting
+            Info Penting Dari Admin
           </button>
         </div>
 
@@ -112,7 +112,7 @@ const HomePage = () => {
 
       {recommendedUsers?.length > 0 && (
         <div className="col-span-3 lg:col-span-3 hidden lg:block">
-          <div className="bg-secondary rounded-lg shadow p-4">
+          <div className="bg-secondary rounded-lg shadow p-4 mb-4">
             <h2 className="font-semibold mb-4 text-sm text-center">
               Rekomendasi Teman Untuk Anda
             </h2>
@@ -160,9 +160,9 @@ const HomePage = () => {
               </button>
             </div>
           </div>
+          <VerifiedUsers authUser={authUser} allUsers={allUsers} />
         </div>
       )}
-      <VerifiedUsers authUser={authUser} allUsers={allUsers} />
     </div>
   );
 };

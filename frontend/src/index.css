@@ -33,3 +33,9 @@
   white-space: nowrap;
   z-index: 99;
 }
+
+/* Local CSS / scoped CSS */
+.custom-editor .ql-container {
+  height: auto;
+}
+
