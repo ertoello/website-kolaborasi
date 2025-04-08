@@ -122,8 +122,8 @@ const PostCreation = ({ user }) => {
           alt={user.name}
           className="size-12 rounded-full"
         />
-        <article className="mt-4">
-          <label className="block mb-2 text-sm font-semibold text-gray-700">
+        <article className="mt-2">
+          <label className="block mb-2 text-md font-bold text-gray-700">
             Kirim Postingan
           </label>
           <div className="rounded-xl overflow-hidden shadow-sm border border-gray-300 focus-within:ring-2 focus-within:ring-primary transition-all duration-300 bg-white">

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { axiosInstance } from "../lib/axios";
 import Sidebar from "../components/Sidebar";
 import PostCreation from "../components/PostCreation";
@@ -8,11 +8,13 @@ import { Users } from "lucide-react";
 import RecommendedUser from "../components/RecommendedUser";
 import VerifiedUsers from "../components/VerifiedUsers";
 import TermsAndConditions from "../components/TermsAndConditions";
+import CategoryFilter from "../components/CategoryFilter";
 
 const HomePage = () => {
   const [page, setPage] = useState(1); // State untuk halaman saat ini
   const limit = 7; // Jumlah pengguna per halaman
   const [category, setCategory] = useState("all");
+  const queryClient = useQueryClient();
 
   const { data: authUser } = useQuery({
     queryKey: ["authUser"],
@@ -32,6 +34,28 @@ const HomePage = () => {
     },
     enabled: authUser?.role === "admin", // Hanya fetch data jika username cocok
   });
+
+  const { data: unreadCounts } = useQuery({
+    queryKey: ["unreadPostCounts"],
+    queryFn: async () => {
+      const res = await axiosInstance.get("/notifications/notif/count-unread-posts");
+      return res.data;
+    },
+  });
+
+  const markCategoryAsRead = async (categoryName) => {
+    try {
+      await axiosInstance.post(
+        "/notifications/notif/mark-post-read-by-category",
+        {
+          category: categoryName,
+        }
+      );
+      queryClient.invalidateQueries(["unreadPostCounts"]); // Refresh badge count
+    } catch (error) {
+      console.error("Failed to mark notifications as read", error);
+    }
+  };
 
   const { data: recommendedData } = useQuery({
     queryKey: ["recommendedUsers", page], // Query akan diperbarui setiap kali `page` berubah
@@ -68,28 +92,12 @@ const HomePage = () => {
 
       <div className="col-span-1 lg:col-span-6 order-first lg:order-none">
         <PostCreation user={authUser} />
-        <div className="flex justify-start gap-4 mb-4">
-          <button
-            onClick={() => setCategory("all")}
-            className={`px-4 py-2 rounded ${
-              category === "all"
-                ? "bg-[#3FA3CE] text-white"
-                : "bg-gray-200 text-gray-800"
-            }`}
-          >
-            Semua
-          </button>
-          <button
-            onClick={() => setCategory("penting")}
-            className={`px-4 py-2 rounded ${
-              category === "penting"
-                ? "bg-[#3FA3CE] text-white"
-                : "bg-gray-200 text-gray-800"
-            }`}
-          >
-            Info Penting Dari Admin
-          </button>
-        </div>
+        <CategoryFilter
+          category={category}
+          setCategory={setCategory}
+          unreadCounts={unreadCounts}
+          markCategoryAsRead={markCategoryAsRead}
+        />
 
         {posts?.map((post) => (
           <Post key={post._id} post={post} />

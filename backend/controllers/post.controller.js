@@ -3,6 +3,8 @@ import Post from "../models/post.model.js";
 import Notification from "../models/notification.model.js";
 import { sendCommentNotificationEmail } from "../emails/emailHandlers.js";
 import User from "../models/user.model.js";
+import { createPostNotificationForAllUsers } from "./notification.controller.js"; // atau lokasi kamu simpan
+
 
 export const getFeedPosts = async (req, res) => {
   try {
@@ -31,31 +33,28 @@ export const getFeedPosts = async (req, res) => {
 };
 
 export const createPost = async (req, res) => {
-	try {
-		const { content, image } = req.body;
-		let newPost;
+  try {
+    const { content, image, category } = req.body;
 
-		if (image) {
-			const imgResult = await cloudinary.uploader.upload(image);
-			newPost = new Post({
-				author: req.user._id,
-				content,
-				image: imgResult.secure_url,
-			});
-		} else {
-			newPost = new Post({
-				author: req.user._id,
-				content,
-			});
-		}
+    const newPost = new Post({
+      content,
+      image,
+      category,
+      author: req.user._id,
+    });
 
-		await newPost.save();
+    await newPost.save();
 
-		res.status(201).json(newPost);
-	} catch (error) {
-		console.error("Error in createPost controller:", error);
-		res.status(500).json({ message: "Server error" });
-	}
+    // Kirim notifikasi ke semua user untuk kategori penting / kolaborasi
+    if (["penting", "kolaborasi"].includes(category)) {
+      await createPostNotificationForAllUsers(newPost, category);
+    }
+
+    res.status(201).json(newPost);
+  } catch (error) {
+    console.error("Error creating post:", error);
+    res.status(500).json({ message: "Server error" });
+  }
 };
 
 export const deletePost = async (req, res) => {

@@ -1,4 +1,5 @@
 import Notification from "../models/notification.model.js";
+import User from "../models/user.model.js";
 
 export const getUserNotifications = async (req, res) => {
 	try {
@@ -103,3 +104,101 @@ export const countUnreadMessagesFromSender = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const createPostNotificationForAllUsers = async (post, category) => {
+  try {
+    // Ambil semua user kecuali pembuat post
+    const users = await User.find({ _id: { $ne: post.author } });
+
+    // Siapkan array notifikasi
+    const notifications = users.map((user) => ({
+      recipient: user._id,
+      type: "post",
+      relatedUser: post.author,
+      relatedPost: post._id,
+      read: false,
+    }));
+
+    // Simpan semua notifikasi
+    await Notification.insertMany(notifications);
+    console.log(
+      `Notifikasi untuk kategori "${category}" berhasil dikirim ke semua user`
+    );
+  } catch (error) {
+    console.error("Error saat membuat notifikasi post:", error);
+  }
+};
+
+export const countUnreadPostNotificationsByCategory = async (req, res) => {
+  try {
+    const recipientId = req.user._id;
+
+    const unreadNotifications = await Notification.find({
+      recipient: recipientId,
+      type: "post",
+      read: false,
+    }).populate("relatedPost", "category");
+
+    const counts = {
+      all: unreadNotifications.length,
+      penting: 0,
+      kolaborasi: 0,
+    };
+
+    unreadNotifications.forEach((notif) => {
+      const category = notif.relatedPost?.category;
+
+      if (category === "penting") counts.penting += 1;
+      else if (category === "kolaborasi") counts.kolaborasi += 1;
+    });
+
+    res.status(200).json(counts);
+  } catch (error) {
+    console.error("Error in countUnreadPostNotificationsByCategory:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const markPostNotificationsByCategoryAsRead = async (req, res) => {
+  try {
+    const recipientId = req.user._id;
+    const { category } = req.body;
+
+    // Ambil semua notification yang belum dibaca dan tipe 'post'
+    const unreadNotifs = await Notification.find({
+      recipient: recipientId,
+      type: "post",
+      read: false,
+    }).populate("relatedPost", "category");
+
+    // Ambil ID notifikasi yang relatedPost.category sesuai permintaan
+    const toMarkAsReadIds = unreadNotifs
+      .filter((notif) => notif.relatedPost?.category === category)
+      .map((notif) => notif._id);
+
+    if (toMarkAsReadIds.length === 0) {
+      return res
+        .status(200)
+        .json({
+          message: "Tidak ada notifikasi yang perlu ditandai sebagai dibaca.",
+        });
+    }
+
+    // Update semua notifikasi tersebut
+    await Notification.updateMany(
+      { _id: { $in: toMarkAsReadIds } },
+      { $set: { read: true } }
+    );
+
+    res.status(200).json({
+      message: `Semua notifikasi kategori "${category}" telah ditandai sebagai dibaca.`,
+      count: toMarkAsReadIds.length,
+    });
+  } catch (error) {
+    console.error("Error in markPostNotificationsByCategoryAsRead:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+

@@ -1,7 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { axiosInstance } from "../lib/axios";
 import { toast } from "react-hot-toast";
-import { ExternalLink, Eye, MessageSquare, ThumbsUp, Trash2, UserPlus } from "lucide-react";
+import {
+  ExternalLink,
+  Eye,
+  MessageSquare,
+  ThumbsUp,
+  Trash2,
+  UserPlus,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import { formatDistanceToNow } from "date-fns";
@@ -16,9 +23,12 @@ const NotificationsPage = () => {
 		queryFn: () => axiosInstance.get("/notifications"),
 	});
 
-  const filteredNotifications = notifications?.data?.filter(
-  (notification) => notification.type !== "message"
-);
+  const allowedTypes = ["like", "comment", "connectionAccepted"];
+
+  const filteredNotifications = notifications?.data?.filter((notification) =>
+    allowedTypes.includes(notification.type)
+  );
+
 
 	const { mutate: markAsReadMutation } = useMutation({
 		mutationFn: (id) => axiosInstance.put(`/notifications/${id}/read`),
@@ -37,47 +47,53 @@ const NotificationsPage = () => {
 
 	const renderNotificationIcon = (type) => {
 		switch (type) {
-			case "like":
-				return <ThumbsUp className='text-blue-500' />;
+      case "like":
+        return <ThumbsUp className="text-blue-500" />;
 
-			case "comment":
-				return <MessageSquare className='text-green-500' />;
-			case "connectionAccepted":
-				return <UserPlus className='text-purple-500' />;
-			default:
-				return null;
-		}
+      case "comment":
+        return <MessageSquare className="text-green-500" />;
+      case "connectionAccepted":
+        return <UserPlus className="text-purple-500" />;
+      default:
+        return null;
+    }
 	};
 
 	const renderNotificationContent = (notification) => {
 		switch (notification.type) {
-			case "like":
-				return (
-					<span>
-						<strong>{notification.relatedUser.name}</strong> liked your post
-					</span>
-				);
-			case "comment":
-				return (
-					<span>
-						<Link to={`/profile/${notification.relatedUser.username}`} className='font-bold'>
-							{notification.relatedUser.name}
-						</Link>{" "}
-						commented on your post
-					</span>
-				);
-			case "connectionAccepted":
-				return (
-					<span>
-						<Link to={`/profile/${notification.relatedUser.username}`} className='font-bold'>
-							{notification.relatedUser.name}
-						</Link>{" "}
-						accepted your connection request
-					</span>
-				);
-			default:
-				return null;
-		}
+      case "like":
+        return (
+          <span>
+            <strong>{notification.relatedUser.name}</strong> liked your post
+          </span>
+        );
+      case "comment":
+        return (
+          <span>
+            <Link
+              to={`/profile/${notification.relatedUser.username}`}
+              className="font-bold"
+            >
+              {notification.relatedUser.name}
+            </Link>{" "}
+            commented on your post
+          </span>
+        );
+      case "connectionAccepted":
+        return (
+          <span>
+            <Link
+              to={`/profile/${notification.relatedUser.username}`}
+              className="font-bold"
+            >
+              {notification.relatedUser.name}
+            </Link>{" "}
+            accepted your connection request
+          </span>
+        );
+      default:
+        return null;
+    }
 	};
 
 	const renderRelatedPost = (relatedPost) => {
