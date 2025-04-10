@@ -140,7 +140,10 @@ const UserPosts = ({ post }) => {
             </button>
           )}
         </div>
-        <p className="mb-4">{post.content}</p>
+        <div
+          className="prose max-w-none"
+          dangerouslySetInnerHTML={{ __html: post.content }}
+        ></div>
         {post.image && (
           <img
             src={post.image}

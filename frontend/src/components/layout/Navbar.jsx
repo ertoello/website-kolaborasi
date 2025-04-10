@@ -68,16 +68,18 @@ const Navbar = () => {
     enabled: !!authUser,
   });
 
+  const allowedTypes = ["like", "comment", "connectionAccepted"];
 
   const unreadNotificationCount = notifications?.data?.filter(
-    (notif) => !notif.read && notif.type !== "message"
-  ).length;
+    (notif) => !notif.read && allowedTypes.includes(notif.type)
+  )?.length;
+
 
   const unreadConnectionRequestsCount = connectionRequests?.data?.length;
   const location = useLocation();
 
   return (
-    <nav className="bg-white shadow-md sticky top-0 z-10 border-b border-gray-200">
+    <nav className="bg-white shadow-md sticky top-0 z-50 border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 flex justify-around items-center py-3">
         <div className="flex items-center space-x-4">
           <Link to="/dashboard">
@@ -179,13 +181,18 @@ const Navbar = () => {
                 unreadMessagesCount={unreadMessagesCount?.count}
               />
               {/* Profil & Logout */}
-              <div className="flex items-center md:gap-3 gap-1">
+              <div className="flex items-center md:gap-3">
+                {/* Home icon: tampil hanya di mobile */}
+                <Link to="/" className="nav-icon block md:hidden">
+                  <Home size={26} />
+                </Link>
+                {/* Profile icon: tampil hanya di desktop */}
                 <Link
                   to={`/profile/${authUser.username}`}
-                  // className="hidden md:flex"
+                  className="hidden md:block"
                 >
                   <img
-                    className="h-10 w-10 rounded-full object-cover border-2 border-gray-300"
+                    className="h-10 w-10 min-w-[2.5rem] rounded-full object-cover border-2 border-gray-300"
                     src={authUser.profilePicture || "/avatar.png"}
                     alt={authUser.name}
                   />

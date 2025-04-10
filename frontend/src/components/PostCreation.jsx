@@ -131,7 +131,7 @@ const PostCreation = ({ user }) => {
               theme="snow"
               value={content}
               onChange={setContent}
-              placeholder="Bagikan sesuatu yang bermanfaat atau inspiratif..."
+              placeholder="Bagikan sesuatu yang inspiratif..."
               className="text-base custom-editor"
               modules={{
                 toolbar: {

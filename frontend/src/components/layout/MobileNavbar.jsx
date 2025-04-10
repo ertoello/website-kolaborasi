@@ -14,8 +14,18 @@ const MobileNavbar = ({
     <div className="md:hidden relative">
       {/* Hamburger Button */}
       {!isOpen && (
-        <button onClick={() => setIsOpen(true)} className="p-2">
+        <button onClick={() => setIsOpen(true)} className="p-2 relative">
           <Menu size={28} />
+          {(unreadNotificationCount > 0 ||
+            unreadConnectionRequestsCount > 0 ||
+            unreadMessagesCount > 0) && (
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5">
+              {/* Jumlah total semua notif */}
+              {unreadNotificationCount +
+                unreadConnectionRequestsCount +
+                unreadMessagesCount}
+            </span>
+          )}
         </button>
       )}
 
@@ -26,7 +36,15 @@ const MobileNavbar = ({
         } transition-transform duration-300 ease-in-out`}
       >
         <div className="p-4 flex justify-between items-center border-b">
-          <span className="font-semibold text-lg">Menu</span>
+          <div className="flex items-center space-x-4">
+          <Link to="/dashboard">
+            <img
+              className="h-10 rounded-full"
+              src="/logopanjang1.png"
+              alt="Kolaborasi"
+            />
+          </Link>
+        </div>
           <button onClick={() => setIsOpen(false)}>
             <X size={24} />
           </button>
@@ -34,18 +52,11 @@ const MobileNavbar = ({
 
         <div className="p-4 flex flex-col gap-4">
           <Link
-            to="/"
-            className="flex items-center gap-2"
-            onClick={() => setIsOpen(false)}
-          >
-            <Home size={24} /> Home
-          </Link>
-          <Link
             to="/network"
             className="flex items-center gap-2 relative"
             onClick={() => setIsOpen(false)}
           >
-            <Users size={24} /> Kolaborasi / Cari Partner
+            <Users size={24} /> Daftar Koneksi Anda
             {unreadConnectionRequestsCount > 0 && (
               <span className="bg-red-500 text-white text-xs rounded-full px-2 ml-2">
                 {unreadConnectionRequestsCount}
@@ -57,7 +68,7 @@ const MobileNavbar = ({
             className="flex items-center gap-2"
             onClick={() => setIsOpen(false)}
           >
-            <MessageCircle size={24} /> Forum Diskusi / Obrolan Proyek
+            <MessageCircle size={24} /> Forum Diskusi
             {unreadMessagesCount > 0 && (
               <span className="bg-red-500 text-white text-xs rounded-full px-2 ml-2">
                 {unreadMessagesCount}

@@ -120,7 +120,7 @@ const ChatContainer = () => {
               )}
               {message.text && (
                 <div
-                  className="prose max-w-none mb-4"
+                  className="prose max-w-none"
                   dangerouslySetInnerHTML={{ __html: message.text }}
                 />
               )}

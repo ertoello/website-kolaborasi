@@ -9,12 +9,17 @@ import RecommendedUser from "../components/RecommendedUser";
 import VerifiedUsers from "../components/VerifiedUsers";
 import TermsAndConditions from "../components/TermsAndConditions";
 import CategoryFilter from "../components/CategoryFilter";
+import MobileBottomNavbar from "../components/MobileBottomNavbar";
+
 
 const HomePage = () => {
   const [page, setPage] = useState(1); // State untuk halaman saat ini
   const limit = 7; // Jumlah pengguna per halaman
   const [category, setCategory] = useState("all");
   const queryClient = useQueryClient();
+  const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
+  const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false);
+
 
   const { data: authUser } = useQuery({
     queryKey: ["authUser"],
@@ -170,6 +175,122 @@ const HomePage = () => {
           </div>
           <VerifiedUsers authUser={authUser} allUsers={allUsers} />
         </div>
+      )}
+
+      <MobileBottomNavbar
+        onLeftSidebarToggle={() => setIsLeftSidebarOpen(!isLeftSidebarOpen)}
+        onRightSidebarToggle={() => setIsRightSidebarOpen(!isRightSidebarOpen)}
+      />
+
+      {/* Sidebar kiri versi mobile */}
+      <div
+        className={`fixed top-0 left-0 h-full w-[20rem] bg-white z-50 shadow-lg transform transition-transform duration-300 lg:hidden ${
+          isLeftSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <div className="p-4 border-b flex justify-between items-center bg-blue-600 text-white">
+          <span className="font-bold">Menu</span>
+          <button
+            onClick={() => setIsLeftSidebarOpen(false)}
+            className="text-white text-2xl"
+          >
+            &times;
+          </button>
+        </div>
+
+        <div className="p-4 overflow-y-auto h-[calc(100%-3.5rem)]">
+          <Sidebar user={authUser} />
+          <TermsAndConditions />
+        </div>
+      </div>
+
+      {/* Overlay buat sidebar kiri */}
+      {isLeftSidebarOpen && (
+        <div
+          onClick={() => setIsLeftSidebarOpen(false)}
+          className="fixed inset-0 bg-black opacity-50 z-40 lg:hidden"
+        />
+      )}
+
+      {/* Sidebar kanan versi mobile */}
+      <div
+        className={`fixed top-0 right-0 h-full w-[14rem] bg-white z-50 shadow-lg transform transition-transform duration-300 lg:hidden ${
+          isRightSidebarOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <div className="p-4 border-b flex justify-between items-center bg-blue-600 text-white">
+          <span className="font-bold">Rekomendasi Teman</span>
+          <button
+            onClick={() => setIsRightSidebarOpen(false)}
+            className="text-white text-2xl"
+          >
+            &times;
+          </button>
+        </div>
+
+        <div className="p-4 overflow-y-auto h-[calc(100%-3.5rem)]">
+          {recommendedUsers?.map((user) => (
+            <RecommendedUser key={user._id} user={user} />
+          ))}
+
+          {/* Pagination untuk mobile sidebar kanan */}
+          <div className="flex justify-center my-4 gap-x-1 ">
+            <button
+              className={`px-3 py-1 text-sm rounded-md transition-all ${
+                page === 1
+                  ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                  : "bg-blue-600 text-white hover:bg-blue-700 shadow-sm"
+              }`}
+              onClick={() => setPage(page - 1)}
+              disabled={page === 1}
+            >
+              ← Prev
+            </button>
+
+            {[...Array(totalPages)].map((_, index) => (
+              <button
+                key={index}
+                className={`px-3 py-1 text-sm rounded-md transition-all shadow-sm ${
+                  page === index + 1
+                    ? "bg-blue-700 text-white font-semibold"
+                    : "bg-blue-500 text-white hover:bg-blue-600"
+                }`}
+                onClick={() => setPage(index + 1)}
+              >
+                {index + 1}
+              </button>
+            ))}
+
+            <button
+              className={`px-3 py-1 text-sm rounded-md transition-all ${
+                page === totalPages
+                  ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                  : "bg-blue-600 text-white hover:bg-blue-700 shadow-sm"
+              }`}
+              onClick={() => setPage(page + 1)}
+              disabled={page === totalPages}
+            >
+              Next →
+            </button>
+          </div>
+          <VerifiedUsers authUser={authUser} allUsers={allUsers} />
+        </div>
+      </div>
+
+      {/* Overlay buat sidebar kanan */}
+      {isRightSidebarOpen && (
+        <div
+          onClick={() => setIsRightSidebarOpen(false)}
+          className="fixed inset-0 bg-black opacity-50 z-40 lg:hidden"
+        />
+      )}
+
+      {/* Overlay buat sidebar kanan */}
+      {isRightSidebarOpen && (
+        <div
+          onClick={() => setIsRightSidebarOpen(false)}
+          className="fixed inset-0 bg-black opacity-50 z-40 lg:hidden"
+        />
       )}
     </div>
   );
