@@ -151,7 +151,7 @@ const PostCreation = ({ user }) => {
             <div
               ref={quillRef}
               className="custom-editor"
-              style={{ minHeight: "50px" }}
+              style={{ minHeight: "55px" }}
             />
           </div>
         </article>

@@ -142,7 +142,7 @@ const Post = ({ post }) => {
           )}
         </div>
         <div
-          className="prose max-w-none"
+          className="prose max-w-none break-words whitespace-pre-wrap overflow-hidden"
           dangerouslySetInnerHTML={{ __html: post.content }}
         ></div>
 

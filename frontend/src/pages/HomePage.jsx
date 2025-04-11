@@ -91,13 +91,13 @@ const HomePage = () => {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-      <div className="hidden lg:block lg:col-span-3">
+      <div className="hidden lg:block fixed top-0 left-0 h-screen overflow-y-auto w-[18rem] pt-20 pl-4">
         <Sidebar user={authUser} />
         {/* Syarat dan Ketentuan berada di luar sidebar */}
         <TermsAndConditions />
       </div>
 
-      <div className="col-span-1 lg:col-span-6 order-first lg:order-none">
+      <div className="col-span-1 lg:col-span-9 order-first lg:order-none lg:ml-[18rem]">
         <div className="hidden lg:block bg-secondary rounded-lg shadow mb-4 p-4">
           <PostCreation user={authUser} />
         </div>
@@ -128,7 +128,7 @@ const HomePage = () => {
       </div>
 
       {recommendedUsers?.length > 0 && (
-        <div className="col-span-3 lg:col-span-3 hidden lg:block">
+        <div className="lg:col-span-3 hidden lg:block">
           <div className="bg-secondary rounded-lg shadow p-4 mb-4">
             <h2 className="font-semibold mb-4 text-sm text-center">
               Rekomendasi Teman Untuk Anda
