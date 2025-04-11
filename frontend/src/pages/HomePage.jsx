@@ -19,6 +19,8 @@ const HomePage = () => {
   const queryClient = useQueryClient();
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
   const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false);
+  const [showMobilePost, setShowMobilePost] = useState(false);
+
 
 
   const { data: authUser } = useQuery({
@@ -96,7 +98,9 @@ const HomePage = () => {
       </div>
 
       <div className="col-span-1 lg:col-span-6 order-first lg:order-none">
-        <PostCreation user={authUser} />
+        <div className="hidden lg:block bg-secondary rounded-lg shadow mb-4 p-4">
+          <PostCreation user={authUser} />
+        </div>
         <CategoryFilter
           category={category}
           setCategory={setCategory}
@@ -180,6 +184,7 @@ const HomePage = () => {
       <MobileBottomNavbar
         onLeftSidebarToggle={() => setIsLeftSidebarOpen(!isLeftSidebarOpen)}
         onRightSidebarToggle={() => setIsRightSidebarOpen(!isRightSidebarOpen)}
+        setShowMobilePost={setShowMobilePost}
       />
 
       {/* Sidebar kiri versi mobile */}
@@ -214,7 +219,7 @@ const HomePage = () => {
 
       {/* Sidebar kanan versi mobile */}
       <div
-        className={`fixed top-0 right-0 h-full w-[14rem] bg-white z-50 shadow-lg transform transition-transform duration-300 lg:hidden ${
+        className={`fixed top-0 right-0 h-full w-[16rem] bg-white z-50 shadow-lg transform transition-transform duration-300 lg:hidden ${
           isRightSidebarOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -276,6 +281,20 @@ const HomePage = () => {
           <VerifiedUsers authUser={authUser} allUsers={allUsers} />
         </div>
       </div>
+
+      {showMobilePost && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center lg:hidden">
+          <div className="bg-white rounded-lg p-4 w-full max-w-md mx-auto">
+            <PostCreation user={authUser} />
+            <button
+              onClick={() => setShowMobilePost(false)}
+              className="mt-2 text-sm text-red-500 hover:underline block text-center"
+            >
+              Tutup
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Overlay buat sidebar kanan */}
       {isRightSidebarOpen && (

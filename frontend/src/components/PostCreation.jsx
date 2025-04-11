@@ -3,19 +3,54 @@ import { useState, useEffect } from "react";
 import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 import { Image, Loader } from "lucide-react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import { useQuill } from "react-quilljs";
+import "quill/dist/quill.snow.css";
 import DOMPurify from "dompurify";
 import "../index.css";
 
-
 const PostCreation = ({ user }) => {
-  const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [category, setCategory] = useState("kolaborasi");
-
   const queryClient = useQueryClient();
+
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, 3, false] }],
+      [{ font: [] }, { size: [] }],
+      ["bold", "italic", "underline", "strike"],
+      [{ color: [] }, { background: [] }],
+      [{ script: "sub" }, { script: "super" }],
+      [{ list: "ordered" }, { list: "bullet" }],
+      ["blockquote", "code-block"],
+      ["link", "image"],
+      ["clean"],
+    ],
+  };
+
+  const formats = [
+    "header",
+    "font",
+    "size",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "color",
+    "background",
+    "script",
+    "list",
+    "blockquote",
+    "code-block",
+    "link",
+  ];
+
+  const { quill, quillRef } = useQuill({
+    theme: "snow",
+    placeholder: "Bagikan sesuatu yang menarik dan inspiratif...",
+    modules,
+    formats,
+  });
 
   const { mutate: createPostMutation, isPending } = useMutation({
     mutationFn: async (postData) => {
@@ -30,14 +65,15 @@ const PostCreation = ({ user }) => {
       queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
     onError: (err) => {
-      toast.error(err.response.data.message || "Failed to create post");
+      toast.error(err.response?.data?.message || "Failed to create post");
     },
   });
 
   const handlePostCreation = async () => {
     try {
-      const cleanHTML = DOMPurify.sanitize(content); // optional: untuk keamanan
-      const plainText = cleanHTML.replace(/<[^>]+>/g, "").trim(); // hapus semua tag HTML
+      const rawHTML = quill?.root.innerHTML || "";
+      const cleanHTML = DOMPurify.sanitize(rawHTML);
+      const plainText = cleanHTML.replace(/<[^>]+>/g, "").trim();
 
       const postData = { content: cleanHTML, plainText, category };
       if (image) postData.image = await readFileAsDataURL(image);
@@ -49,7 +85,7 @@ const PostCreation = ({ user }) => {
   };
 
   const resetForm = () => {
-    setContent("");
+    if (quill) quill.setText("");
     setImage(null);
     setImagePreview(null);
     setCategory("kolaborasi");
@@ -75,44 +111,29 @@ const PostCreation = ({ user }) => {
   };
 
   useEffect(() => {
+    if (!quill) return;
+    // Tooltip manual (opsional)
     const tooltips = {
-      bold: "Tebal: Membuat teks jadi tebal",
-      italic: "Miring: Membuat teks miring",
-      underline: "Garis bawah: Memberi garis bawah",
-      strike: "Coret: Menandai teks dengan coretan",
-      link: "Tautan: Menyisipkan hyperlink",
-      "code-block": "Blok kode: Format teks seperti kode",
-      blockquote: "Kutipan: Menyorot kutipan",
-      clean: "Bersihkan: Menghapus semua format teks",
-      list: "Nomor: Buat daftar bernomor",
-      bullet: "Poin: Buat daftar dengan poin",
-      "indent-1": "Geser kiri: Mengurangi indentasi",
-      "indent+1": "Geser kanan: Menambah indentasi",
-      align: "Rata: Mengatur perataan teks",
-      background: "Warna latar: Ganti warna latar belakang teks",
-      color: "Warna teks: Ganti warna teks",
-      script: "Sub/Superscript: Format pangkat bawah/atas",
-      font: "Font: Pilih jenis huruf",
-      size: "Ukuran: Atur besar kecil huruf",
-      header: "Judul: Atur level heading",
-      direction: "Arah tulisan: Kanan ke kiri / kiri ke kanan",
+      bold: "Tebal",
+      italic: "Miring",
+      underline: "Garis bawah",
+      strike: "Coret",
+      link: "Tautan",
+      "code-block": "Kode",
+      blockquote: "Kutipan",
+      clean: "Bersihkan",
     };
-
-    const buttons = document.querySelectorAll(
-      ".ql-toolbar button, .ql-toolbar select"
-    );
-    buttons.forEach((btn) => {
+    const buttons = quillRef.current?.querySelectorAll("button, select");
+    buttons?.forEach((btn) => {
       const className = Array.from(btn.classList).find((cls) =>
         cls.startsWith("ql-")
       );
-      if (className) {
-        const key = className.replace("ql-", "");
-        if (!btn.hasAttribute("aria-label") && tooltips[key]) {
-          btn.setAttribute("aria-label", tooltips[key]);
-        }
+      const key = className?.replace("ql-", "");
+      if (key && tooltips[key]) {
+        btn.setAttribute("aria-label", tooltips[key]);
       }
     });
-  }, []);
+  }, [quill]);
 
   return (
     <div className="bg-secondary rounded-lg shadow mb-4 p-4">
@@ -122,53 +143,15 @@ const PostCreation = ({ user }) => {
           alt={user.name}
           className="size-12 rounded-full"
         />
-        <article className="mt-2">
+        <article className="mt-2 w-full max-w-[65vw] md:max-w-[35vw]">
           <label className="block mb-2 text-md font-bold text-gray-700">
             Kirim Postingan
           </label>
-          <div className="rounded-xl overflow-hidden shadow-sm border border-gray-300 focus-within:ring-2 focus-within:ring-primary transition-all duration-300 bg-white">
-            <ReactQuill
-              theme="snow"
-              value={content}
-              onChange={setContent}
-              placeholder="Bagikan sesuatu yang inspiratif..."
-              className="text-base custom-editor"
-              modules={{
-                toolbar: {
-                  container: [
-                    [{ header: [1, 2, 3, 4, 5, 6, false] }],
-                    [{ font: [] }, { size: [] }],
-                    ["bold", "italic", "underline", "strike"],
-                    [{ color: [] }, { background: [] }],
-                    [{ script: "sub" }, { script: "super" }],
-                    [{ list: "ordered" }, { list: "bullet" }],
-                    ["blockquote", "code-block"],
-                    ["link"],
-                    ["clean"],
-                  ],
-                },
-                clipboard: {
-                  matchVisual: false,
-                },
-              }}
-              formats={[
-                "header",
-                "font",
-                "size",
-                "bold",
-                "italic",
-                "underline",
-                "strike",
-                "color",
-                "background",
-                "script",
-                "list",
-                "bullet",
-                "blockquote",
-                "code-block",
-                "link",
-                "clean",
-              ]}
+          <div className="rounded-xl overflow-hidden shadow-sm border border-gray-300 bg-white">
+            <div
+              ref={quillRef}
+              className="custom-editor"
+              style={{ minHeight: "50px" }}
             />
           </div>
         </article>
@@ -202,7 +185,7 @@ const PostCreation = ({ user }) => {
 
       <div className="flex justify-between items-center mt-4">
         <div className="flex space-x-4">
-          <label className="flex items-center text-info hover:text-info-dark transition-colors duration-200 cursor-pointer">
+          <label className="flex items-center text-info hover:text-info-dark cursor-pointer">
             <Image size={20} className="mr-2" />
             <span>Photo</span>
             <input

@@ -2,20 +2,56 @@ import { useRef, useState, useEffect } from "react";
 import { useChatStore } from "../store/useChatStore";
 import { Image, Send, X } from "lucide-react";
 import toast from "react-hot-toast";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import { useQuill } from "react-quilljs";
+import "quill/dist/quill.snow.css";
 import DOMPurify from "dompurify";
 import "../index.css";
 
 const MessageInput = () => {
-  const [text, setText] = useState("");
+  const [editorText, setEditorText] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
   const fileInputRef = useRef(null);
   const { sendMessage } = useChatStore();
+  const { quill, quillRef } = useQuill({
+    modules: {
+      toolbar: {
+        container: [
+          [{ header: [1, 2, 3, 4, 5, 6, false] }],
+          [{ font: [] }, { size: [] }],
+          ["bold", "italic", "underline", "strike"],
+          [{ color: [] }, { background: [] }],
+          [{ script: "sub" }, { script: "super" }],
+          [{ list: "ordered" }, { list: "bullet" }],
+          ["blockquote", "code-block"],
+          ["link"],
+          ["clean"],
+        ],
+      },
+      clipboard: { matchVisual: false },
+    },
+    formats: [
+      "header",
+      "font",
+      "size",
+      "bold",
+      "italic",
+      "underline",
+      "strike",
+      "color",
+      "background",
+      "script",
+      "list",
+      "blockquote",
+      "code-block",
+      "link",
+    ],
+    theme: "snow",
+    placeholder: "Type a message...",
+  });
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if (!file.type.startsWith("image/")) {
+    if (!file?.type?.startsWith("image/")) {
       toast.error("Please select an image file");
       return;
     }
@@ -34,8 +70,10 @@ const MessageInput = () => {
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
+    if (!quill) return;
 
-    const sanitizedText = DOMPurify.sanitize(text); // Sanitize Quill HTML
+    const htmlContent = quill.root.innerHTML;
+    const sanitizedText = DOMPurify.sanitize(htmlContent);
     const plainText = sanitizedText.replace(/<(.|\n)*?>/g, "").trim();
 
     if (!plainText && !imagePreview) return;
@@ -46,8 +84,8 @@ const MessageInput = () => {
         image: imagePreview,
       });
 
-      // Clear form
-      setText("");
+      // Clear editor
+      quill.setText(""); // Clear content
       setImagePreview(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
     } catch (error) {
@@ -93,75 +131,67 @@ const MessageInput = () => {
         }
       }
     });
-  }, []);
+
+    if (!quill) return;
+
+    const updateText = () => {
+      const text = quill.getText().trim();
+      setEditorText(text);
+    };
+
+    quill.on("text-change", updateText);
+
+    return () => {
+      quill.off("text-change", updateText);
+    };
+  }, [quill]);
+
 
   return (
-    <div className="p-4 w-full">
-      {imagePreview && (
-        <div className="mb-3 flex items-center gap-2">
-          <div className="relative">
-            <img
-              src={imagePreview}
-              alt="Preview"
-              className="w-20 h-20 object-cover rounded-lg border border-white"
-            />
-            <button
-              onClick={removeImage}
-              className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-base-300
-              flex items-center justify-center"
-              type="button"
-            >
-              <X className="size-3" />
-            </button>
-          </div>
-        </div>
-      )}
+    <div className="w-full flex justify-center p-2 shadow-lg">
+      <form
+        onSubmit={handleSendMessage}
+        className="flex flex-col gap-3 w-[full] max-w-[80vw] md:max-w-[65vw]"
+      >
+        {/* EDITOR */}
+        <div
+          ref={quillRef}
+          className="bg-white rounded-md custom-editor"
+          // style={{ minHeight: "50px" }}
+        />
 
-      <form onSubmit={handleSendMessage} className="flex items-center gap-2">
-        <div className="flex-1 flex gap-2">
-          <ReactQuill
-            theme="snow"
-            value={text}
-            onChange={setText}
-            className="bg-white rounded-md w-full custom-editor"
-            placeholder="Type a message..."
-            modules={{
-              toolbar: {
-                container: [
-                  [{ header: [1, 2, 3, 4, 5, 6, false] }],
-                  [{ font: [] }, { size: [] }],
-                  ["bold", "italic", "underline", "strike"],
-                  [{ color: [] }, { background: [] }],
-                  [{ script: "sub" }, { script: "super" }],
-                  [{ list: "ordered" }, { list: "bullet" }],
-                  ["blockquote", "code-block"],
-                  ["link"],
-                  ["clean"],
-                ],
-              },
-              clipboard: {
-                matchVisual: false,
-              },
-            }}
-            formats={[
-              "header",
-              "font",
-              "size",
-              "bold",
-              "italic",
-              "underline",
-              "strike",
-              "color",
-              "background",
-              "script",
-              "list",
-              "bullet",
-              "blockquote",
-              "code-block",
-              "link",
-              "clean",
-            ]}
-          />
+        {/* IMAGE PREVIEW */}
+        {imagePreview && (
+          <div className="flex items-center gap-2">
+            <div className="relative">
+              <img
+                src={imagePreview}
+                alt="Preview"
+                className="w-20 h-20 object-cover rounded-lg border"
+              />
+              <button
+                onClick={removeImage}
+                className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center"
+                type="button"
+              >
+                <X className="size-4" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ACTIONS */}
+        <div className="flex items-center justify-between gap-3">
+          <button
+            type="button"
+            className={`btn btn-sm btn-outline ${
+              imagePreview ? "text-emerald-500" : "text-zinc-400"
+            }`}
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <Image size={20} className="mr-1" />
+            Upload Gambar
+          </button>
 
           <input
             type="file"
@@ -172,23 +202,17 @@ const MessageInput = () => {
           />
 
           <button
-            type="button"
-            className={`hidden sm:flex btn btn-circle
-                     ${imagePreview ? "text-emerald-500" : "text-zinc-400"}`}
-            onClick={() => fileInputRef.current?.click()}
+            type="submit"
+            className="btn btn-primary btn-sm"
+            disabled={editorText.length === 0 && !imagePreview}
           >
-            <Image size={20} />
+            <Send size={20} className="mr-1" />
+            Kirim
           </button>
         </div>
-        <button
-          type="submit"
-          className="btn btn-sm btn-circle"
-          disabled={!text.trim() && !imagePreview}
-        >
-          <Send size={22} />
-        </button>
       </form>
     </div>
   );
 };
+
 export default MessageInput;
