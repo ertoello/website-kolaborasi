@@ -20,8 +20,8 @@ export const sendConnectionRequest = async (req, res) => {
       return res.status(400).json({ message: "You are already connected" });
     }
 
-    // Jika pengguna yang login adalah "pengurusdesa", langsung terima koneksi
-    if (req.user.username === "pengurusdesa") {
+    // Jika pengguna yang login memiliki role "admin", langsung terima koneksi
+    if (req.user.role === "admin") {
       await User.findByIdAndUpdate(senderId, {
         $addToSet: { connections: userId },
       });
@@ -38,10 +38,10 @@ export const sendConnectionRequest = async (req, res) => {
 
       return res
         .status(201)
-        .json({ message: "Connection instantly accepted as 'pengurusdesa'" });
+        .json({ message: "Connection instantly accepted by admin" });
     }
 
-    // Jika bukan "pengurusdesa", lakukan permintaan koneksi seperti biasa
+    // Jika bukan "admin", lakukan permintaan koneksi seperti biasa
     const existingRequest = await ConnectionRequest.findOne({
       sender: senderId,
       recipient: userId,
@@ -241,6 +241,26 @@ export const getUserById = async (req, res) => {
     res.json(user);
   } catch (error) {
     console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const getConnectionsByUsername = async (req, res) => {
+  try {
+    const { username } = req.params;
+
+    const user = await User.findOne({ username }).populate(
+      "connections",
+      "name username profilePicture headline"
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: "User tidak ditemukan" });
+    }
+
+    res.json(user.connections);
+  } catch (error) {
+    console.error("Error in getConnectionsByUsername:", error);
     res.status(500).json({ message: "Server error" });
   }
 };

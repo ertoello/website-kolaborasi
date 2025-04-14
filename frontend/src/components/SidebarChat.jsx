@@ -91,13 +91,14 @@ const SidebarChat = ({ isSidebarOpen, setSidebarOpen }) => {
     transform transition-transform duration-300 ease-in-out
     ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
     lg:relative lg:top-0 lg:h-full lg:translate-x-0 lg:w-72
+    h-[100vh] overflow-y-auto
   `}
     >
       {/* Konten sidebar seperti sebelumnya */}
       <div className="border-b border-white w-full p-5 bg-[#3FA3CE] text-white">
         <div className="flex items-center gap-2">
           <Users className="size-6" />
-          <span className="font-medium block">Contacts</span>
+          <span className="font-medium block">Daftar Teman Anda</span>
         </div>
         {/* Checkbox dan status online */}
         <div className="mt-3 flex items-center gap-2">
@@ -108,7 +109,7 @@ const SidebarChat = ({ isSidebarOpen, setSidebarOpen }) => {
               onChange={(e) => setShowOnlineOnly(e.target.checked)}
               className="checkbox checkbox-sm"
             />
-            <span className="text-sm">Show online only</span>
+            <span className="text-sm">Hanya Tampil Online</span>
           </label>
           <span className="text-sm text-green-300 font-medium">
             ({Math.max(onlineUsers.length - 1, 0)} online)

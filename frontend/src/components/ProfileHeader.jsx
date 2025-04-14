@@ -98,14 +98,12 @@ const ProfileHeader = ({ userData, onSave, isOwnProfile }) => {
     const baseClass =
       "text-white py-2 px-4 rounded-full transition duration-300 flex items-center justify-center";
 
-    // Jika username adalah "pengurusdesa", tampilkan tombol disabled
-    if (userData.username === "pengurusdesa") {
+    // Jika role adalah "admin", tampilkan tombol disabled
+    if (userData.role === "admin") {
       return (
-        <div
-          className={`${baseClass} bg-green-700 cursor-not-allowed`}
-        >
+        <div className={`${baseClass} bg-green-700 cursor-not-allowed`}>
           <UserCheck size={20} className="mr-2" />
-        Terkoneksi Otomatis
+          Terkoneksi Otomatis
         </div>
       );
     }

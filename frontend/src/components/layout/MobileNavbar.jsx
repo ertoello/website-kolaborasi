@@ -21,9 +21,9 @@ const MobileNavbar = ({
             unreadMessagesCount > 0) && (
             <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5">
               {/* Jumlah total semua notif */}
-              {unreadNotificationCount +
-                unreadConnectionRequestsCount +
-                unreadMessagesCount}
+              {(Number(unreadNotificationCount) || 0) +
+                (Number(unreadConnectionRequestsCount) || 0) +
+                (Number(unreadMessagesCount) || 0)}
             </span>
           )}
         </button>
@@ -37,14 +37,14 @@ const MobileNavbar = ({
       >
         <div className="p-4 flex justify-between items-center border-b">
           <div className="flex items-center space-x-4">
-          <Link to="/dashboard">
-            <img
-              className="h-10 rounded-full"
-              src="/logopanjang1.png"
-              alt="Kolaborasi"
-            />
-          </Link>
-        </div>
+            <Link to="/dashboard">
+              <img
+                className="h-10 rounded-full"
+                src="/logopanjang1.png"
+                alt="Kolaborasi"
+              />
+            </Link>
+          </div>
           <button onClick={() => setIsOpen(false)}>
             <X size={24} />
           </button>

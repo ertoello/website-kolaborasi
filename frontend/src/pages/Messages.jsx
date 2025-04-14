@@ -72,30 +72,26 @@ const MessagesContent = () => {
   }, []);
 
   return (
-    <div className="h-screen flex items-center justify-center">
+    <div className="fixed inset-0 top-16 w-screen h-[calc(100vh-64px)] flex items-center justify-center bg-[#E6E6FA] z-10 p-2">
       {isSidebarOpen && (
-          <div
-            className="fixed inset-0 bg-black bg-opacity-40 z-30 lg:hidden"
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
-        {/* ICON MENU UNTUK MOBILE */}
-        <button
-          onClick={() => setSidebarOpen(true)}
-          className="absolute -left-3 top-1/2 transform -translate-y-1/2 z-40 
-             bg-white rounded-full shadow-lg p-2 hover:bg-gray-100 transition lg:hidden"
-        >
-          <ChevronRight className="w-7 h-7 text-gray-800" />
-        </button>
-      <div className="relative w-full max-w-6xl h-[90vh] flex border border-white bg-[#E6E6FA] rounded-3xl shadow-2xl overflow-hidden">
-        
-        {/* SIDEBAR CHAT */}
+        <div
+          className="fixed inset-0 bg-black bg-opacity-40 z-30 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+      <button
+        onClick={() => setSidebarOpen(true)}
+        className="absolute -left-3 top-1/2 transform -translate-y-1/2 z-40 
+        bg-white rounded-full shadow-lg p-2 hover:bg-gray-100 transition lg:hidden"
+      >
+        <ChevronRight className="w-7 h-7 text-gray-800" />
+      </button>
+
+      <div className="relative w-full max-w-6xl h-full flex border border-white bg-[#E6E6FA] rounded-3xl shadow-2xl overflow-hidden">
         <SidebarChat
           isSidebarOpen={isSidebarOpen}
           setSidebarOpen={setSidebarOpen}
         />
-
-        {/* MAIN CHAT AREA */}
         <div className="flex-1 flex flex-col">
           {selectedUser ? (
             <ChatContainer />

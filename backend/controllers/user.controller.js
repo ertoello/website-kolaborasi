@@ -137,12 +137,15 @@ export const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const deletedUser = await User.findByIdAndDelete(id);
+    const deletedUser = await User.findByIdAndDelete(id); // Ini akan trigger middleware otomatis
+
     if (!deletedUser) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    res.status(200).json({ message: "User deleted successfully" });
+    res
+      .status(200)
+      .json({ message: "User and related data deleted successfully" });
   } catch (error) {
     console.error("Error deleting user:", error.message);
     res.status(500).json({ error: "Internal server error" });

@@ -53,13 +53,22 @@ export const signup = async (req, res) => {
 
     await user.save();
 
-    // **Cari akun "pengurusdesa" dan tambahkan koneksi otomatis**
-    const pengurusDesa = await User.findOne({ username: "pengurusdesa" });
-    if (pengurusDesa) {
-      user.connections.push(pengurusDesa._id); // Tambah pengurusdesa sebagai koneksi
-      pengurusDesa.connections.push(user._id); // Tambah pengguna baru ke koneksi pengurusdesa
-      await user.save();
-      await pengurusDesa.save();
+    // 🔁 Tambahkan koneksi otomatis ke semua user yang memiliki role "admin"
+    const adminUsers = await User.find({ role: "admin" });
+
+    if (adminUsers.length > 0) {
+      adminUsers.forEach(async (admin) => {
+        // Tambahkan user baru ke koneksi admin, dan sebaliknya
+        if (!user.connections.includes(admin._id)) {
+          user.connections.push(admin._id);
+        }
+        if (!admin.connections.includes(user._id)) {
+          admin.connections.push(user._id);
+          await admin.save(); // simpan perubahan admin
+        }
+      });
+
+      await user.save(); // simpan perubahan user setelah loop selesai
     }
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {

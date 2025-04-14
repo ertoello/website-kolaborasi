@@ -23,7 +23,7 @@ const PostCreation = ({ user }) => {
       [{ script: "sub" }, { script: "super" }],
       [{ list: "ordered" }, { list: "bullet" }],
       ["blockquote", "code-block"],
-      ["link", "image"],
+      ["link"],
       ["clean"],
     ],
   };
