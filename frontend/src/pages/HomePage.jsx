@@ -127,59 +127,64 @@ const HomePage = () => {
         )}
       </div>
 
-      {recommendedUsers?.length > 0 && (
-        <div className="lg:col-span-3 hidden lg:block">
-          <div className="bg-secondary rounded-lg shadow p-4 mb-4">
-            <h2 className="font-semibold mb-4 text-sm text-center">
-              Rekomendasi Teman Untuk Anda
-            </h2>
-            {recommendedUsers.map((user) => (
+      <div className="lg:col-span-3 hidden lg:block">
+        <div className="bg-secondary rounded-lg shadow p-4 mb-4">
+          <h2 className="font-semibold mb-4 text-sm text-center">
+            Rekomendasi Teman Untuk Anda
+          </h2>
+
+          {recommendedUsers?.length > 0 ? (
+            recommendedUsers.map((user) => (
               <RecommendedUser key={user._id} user={user} />
+            ))
+          ) : (
+            <p className="text-sm text-gray-500 text-center">
+              Belum ada rekomendasi teman.
+            </p>
+          )}
+
+          <div className="flex justify-center mt-6 gap-x-1">
+            <button
+              className={`px-3 py-1 text-sm rounded-md transition-all ${
+                page === 1
+                  ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                  : "bg-blue-600 text-white hover:bg-blue-700 shadow-sm"
+              }`}
+              onClick={() => setPage(page - 1)}
+              disabled={page === 1}
+            >
+              ← Prev
+            </button>
+
+            {[...Array(totalPages)].map((_, index) => (
+              <button
+                key={index}
+                className={`px-3 py-1 text-sm rounded-md transition-all shadow-sm ${
+                  page === index + 1
+                    ? "bg-blue-700 text-white font-semibold"
+                    : "bg-blue-500 text-white hover:bg-blue-600"
+                }`}
+                onClick={() => setPage(index + 1)}
+              >
+                {index + 1}
+              </button>
             ))}
 
-            <div className="flex justify-center mt-6 gap-x-1">
-              <button
-                className={`px-3 py-1 text-sm rounded-md transition-all ${
-                  page === 1
-                    ? "bg-gray-300 text-gray-600 cursor-not-allowed"
-                    : "bg-blue-600 text-white hover:bg-blue-700 shadow-sm"
-                }`}
-                onClick={() => setPage(page - 1)}
-                disabled={page === 1}
-              >
-                ← Prev
-              </button>
-
-              {[...Array(totalPages)].map((_, index) => (
-                <button
-                  key={index}
-                  className={`px-3 py-1 text-sm rounded-md transition-all shadow-sm ${
-                    page === index + 1
-                      ? "bg-blue-700 text-white font-semibold"
-                      : "bg-blue-500 text-white hover:bg-blue-600"
-                  }`}
-                  onClick={() => setPage(index + 1)}
-                >
-                  {index + 1}
-                </button>
-              ))}
-
-              <button
-                className={`px-3 py-1 text-sm rounded-md transition-all ${
-                  page === totalPages
-                    ? "bg-gray-300 text-gray-600 cursor-not-allowed"
-                    : "bg-blue-600 text-white hover:bg-blue-700 shadow-sm"
-                }`}
-                onClick={() => setPage(page + 1)}
-                disabled={page === totalPages}
-              >
-                Next →
-              </button>
-            </div>
+            <button
+              className={`px-3 py-1 text-sm rounded-md transition-all ${
+                page === totalPages
+                  ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                  : "bg-blue-600 text-white hover:bg-blue-700 shadow-sm"
+              }`}
+              onClick={() => setPage(page + 1)}
+              disabled={page === totalPages}
+            >
+              Next →
+            </button>
           </div>
-          <VerifiedUsers authUser={authUser} allUsers={allUsers} />
         </div>
-      )}
+        <VerifiedUsers authUser={authUser} allUsers={allUsers} />
+      </div>
 
       <MobileBottomNavbar
         onLeftSidebarToggle={() => setIsLeftSidebarOpen(!isLeftSidebarOpen)}
@@ -234,9 +239,13 @@ const HomePage = () => {
         </div>
 
         <div className="p-4 overflow-y-auto h-[calc(100%-3.5rem)]">
-          {recommendedUsers?.map((user) => (
-            <RecommendedUser key={user._id} user={user} />
-          ))}
+          {recommendedUsers && recommendedUsers.length > 0 ? (
+            recommendedUsers.map((user) => (
+              <RecommendedUser key={user._id} user={user} />
+            ))
+          ) : (
+            <p>Belum ada rekomendasi teman.</p>
+          )}
 
           {/* Pagination untuk mobile sidebar kanan */}
           <div className="flex justify-center my-4 gap-x-1 ">

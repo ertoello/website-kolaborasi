@@ -30,7 +30,7 @@ const CategoryFilter = ({
             : "bg-gray-200 text-gray-800"
         }`}
       >
-        Info Penting Dari Admin
+        Info Dari Admin
         {unreadCounts?.penting > 0 && (
           <span className="ml-1 inline-flex items-center justify-center text-xs font-semibold text-white bg-red-500 rounded-full w-5 h-5">
             {unreadCounts.penting}

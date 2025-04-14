@@ -72,7 +72,7 @@ const MessagesContent = () => {
   }, []);
 
   return (
-    <div className="fixed inset-0 top-16 w-screen h-[calc(100vh-64px)] flex items-center justify-center bg-[#E6E6FA] z-10 p-2">
+    <div className="fixed inset-0 top-16 w-screen h-[calc(100vh-64px)] flex items-center justify-center bg-[#E6E6FA] z-10 py-2">
       {isSidebarOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-40 z-30 lg:hidden"

@@ -9,17 +9,98 @@ import {
   sendWelcomeEmail,
 } from "../mailtrap/emails.js";
 
+// export const signup = async (req, res) => {
+//   try {
+//     const { name, username, email, password, nik } = req.body;
+
+//     if (!name || !username || !email || !password || !nik) {
+//       return res.status(400).json({ message: "All fields are required" });
+//     }
+
+//     const existingEmail = await User.findOne({ email });
+//     if (existingEmail) {
+//       return res.status(400).json({ message: "Email already exists" });
+//     }
+
+//     const existingUsername = await User.findOne({ username });
+//     if (existingUsername) {
+//       return res.status(400).json({ message: "Username already exists" });
+//     }
+
+//     if (password.length < 6) {
+//       return res
+//         .status(400)
+//         .json({ message: "Password must be at least 6 characters" });
+//     }
+
+//     const salt = await bcrypt.genSalt(10);
+//     const hashedPassword = await bcrypt.hash(password, salt);
+//     const verificationToken = Math.floor(
+//       100000 + Math.random() * 900000
+//     ).toString();
+
+//     const user = new User({
+//       name,
+//       email,
+//       password: hashedPassword,
+//       username,
+//       nik,
+//       isApproved: false,
+//       verificationToken,
+//       verificationTokenExpiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+//       connections: [], // Inisialisasi array koneksi
+//     });
+
+//     await user.save();
+
+//     // 🔁 Tambahkan koneksi otomatis ke semua user yang memiliki role "admin"
+//     const adminUsers = await User.find({ role: "admin" });
+
+//     if (adminUsers.length > 0) {
+//       adminUsers.forEach(async (admin) => {
+//         // Tambahkan user baru ke koneksi admin, dan sebaliknya
+//         if (!user.connections.includes(admin._id)) {
+//           user.connections.push(admin._id);
+//         }
+//         if (!admin.connections.includes(user._id)) {
+//           admin.connections.push(user._id);
+//           await admin.save(); // simpan perubahan admin
+//         }
+//       });
+
+//       await user.save(); // simpan perubahan user setelah loop selesai
+//     }
+
+//     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+//       expiresIn: "3d",
+//     });
+
+//     await sendVerificationEmail(user.email, verificationToken);
+
+//     res.cookie("jwt-linkedin", token, {
+//       httpOnly: true,
+//       maxAge: 3 * 24 * 60 * 60 * 1000,
+//       sameSite: "strict",
+//       secure: process.env.NODE_ENV === "production",
+//     });
+
+//     res.status(201).json({
+//       success: true,
+//       message: "User created successfully. Please verify your email.",
+//       user: { ...user._doc, password: undefined },
+//     });
+//   } catch (error) {
+//     console.error("Error in signup: ", error.message);
+//     res.status(500).json({ message: "Internal server error" });
+//   }
+// };
+
 export const signup = async (req, res) => {
   try {
     const { name, username, email, password, nik } = req.body;
 
     if (!name || !username || !email || !password || !nik) {
       return res.status(400).json({ message: "All fields are required" });
-    }
-
-    const existingEmail = await User.findOne({ email });
-    if (existingEmail) {
-      return res.status(400).json({ message: "Email already exists" });
     }
 
     const existingUsername = await User.findOne({ username });
@@ -35,9 +116,6 @@ export const signup = async (req, res) => {
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    const verificationToken = Math.floor(
-      100000 + Math.random() * 900000
-    ).toString();
 
     const user = new User({
       name,
@@ -46,36 +124,34 @@ export const signup = async (req, res) => {
       username,
       nik,
       isApproved: false,
-      verificationToken,
-      verificationTokenExpiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
-      connections: [], // Inisialisasi array koneksi
+      isVerified: true, // ✅ Langsung dianggap sudah diverifikasi
+      verificationToken: null,
+      verificationTokenExpiresAt: null,
+      connections: [],
     });
 
     await user.save();
 
-    // 🔁 Tambahkan koneksi otomatis ke semua user yang memiliki role "admin"
+    // 🔁 Tambahkan koneksi otomatis ke semua admin
     const adminUsers = await User.find({ role: "admin" });
 
     if (adminUsers.length > 0) {
-      adminUsers.forEach(async (admin) => {
-        // Tambahkan user baru ke koneksi admin, dan sebaliknya
+      for (const admin of adminUsers) {
         if (!user.connections.includes(admin._id)) {
           user.connections.push(admin._id);
         }
         if (!admin.connections.includes(user._id)) {
           admin.connections.push(user._id);
-          await admin.save(); // simpan perubahan admin
+          await admin.save();
         }
-      });
+      }
 
-      await user.save(); // simpan perubahan user setelah loop selesai
+      await user.save();
     }
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
       expiresIn: "3d",
     });
-
-    await sendVerificationEmail(user.email, verificationToken);
 
     res.cookie("jwt-linkedin", token, {
       httpOnly: true,
@@ -86,7 +162,7 @@ export const signup = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: "User created successfully. Please verify your email.",
+      message: "User created successfully.",
       user: { ...user._doc, password: undefined },
     });
   } catch (error) {
