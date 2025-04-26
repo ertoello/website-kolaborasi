@@ -22,7 +22,10 @@ const __dirname = path.resolve();
 if (process.env.NODE_ENV !== "production") {
   app.use(
     cors({
-      origin: "http://localhost:5173",
+      origin: [
+        "http://localhost:5173",
+        "https://w3lc3pgc-5173.asse.devtunnels.ms",
+      ],
       credentials: true,
     })
   );

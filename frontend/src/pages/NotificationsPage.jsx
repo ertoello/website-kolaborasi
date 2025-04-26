@@ -113,10 +113,11 @@ const NotificationsPage = () => {
         )}
         <div className="flex-1 overflow-hidden">
           <div
-            className="text-sm text-gray-600 prose max-w-none truncate"
+            className="text-sm text-gray-600 prose max-w-full overflow-auto break-words"
             dangerouslySetInnerHTML={{ __html: relatedPost.content }}
           />
         </div>
+
         <ExternalLink size={14} className="text-gray-400" />
       </Link>
     );
