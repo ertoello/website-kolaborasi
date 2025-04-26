@@ -8,11 +8,15 @@ const userSchema = new mongoose.Schema(
     },
     nik: { type: String, required: true, unique: true },
     username: { type: String, required: true, unique: true },
-    email: { type: String, required: true, unique: true },
+    email: { type: String, required: true},
     password: { type: String, required: true },
     lastLogin: {
       type: Date,
       default: Date.now,
+    },
+    role: {
+      type: String,
+      default: "user",
     },
     isVerified: {
       type: Boolean,
@@ -74,6 +78,47 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const User = mongoose.model("User", userSchema);
+// ✅ Middleware diletakkan SETELAH schema didefinisikan
+userSchema.pre("findOneAndDelete", async function (next) {
+  const userId = this.getQuery()["_id"];
+  const Post = (await import("./Post.js")).default;
+  const Message = (await import("./Message.js")).default;
+  const Notification = (await import("./Notification.js")).default;
+  const ConnectionRequest = (await import("./ConnectionRequest.js")).default;
+  const User = (await import("./User.js")).default;
 
+  try {
+    await Post.deleteMany({ author: userId });
+
+    await Post.updateMany(
+      { "comments.user": userId },
+      { $pull: { comments: { user: userId } } }
+    );
+
+    await Post.updateMany({ likes: userId }, { $pull: { likes: userId } });
+
+    await Message.deleteMany({
+      $or: [{ senderId: userId }, { receiverId: userId }],
+    });
+
+    await ConnectionRequest.deleteMany({
+      $or: [{ sender: userId }, { recipient: userId }],
+    });
+
+    await Notification.deleteMany({
+      $or: [{ recipient: userId }, { relatedUser: userId }],
+    });
+
+    await User.updateMany(
+      { connections: userId },
+      { $pull: { connections: userId } }
+    );
+
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
+
+const User = mongoose.model("User", userSchema);
 export default User;

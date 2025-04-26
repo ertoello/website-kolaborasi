@@ -116,7 +116,7 @@ function AppContent() {
           <Route
             path="/dashboardadmin"
             element={
-              authUser?.username === "pengurusdesa" ? (
+              authUser?.role === "admin" ? (
                 <DashboardAdmin />
               ) : (
                 <Navigate to="/dashboard" />

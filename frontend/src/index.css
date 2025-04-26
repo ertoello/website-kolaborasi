@@ -1,3 +1,41 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.ql-toolbar.ql-snow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px;
+}
+
+.ql-toolbar.ql-snow .ql-formats {
+  margin-bottom: 6px;
+}
+
+.ql-toolbar button,
+.ql-toolbar select {
+  position: relative;
+}
+
+.ql-toolbar button:hover::after,
+.ql-toolbar select:hover::after {
+  content: attr(aria-label);
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #1f2937;
+  color: #fff;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 99;
+}
+
+/* Local CSS / scoped CSS */
+.custom-editor .ql-container {
+  height: auto;
+}
+

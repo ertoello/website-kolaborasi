@@ -9,6 +9,7 @@ import {
   removeConnection,
   sendConnectionRequest,
   getUserById,
+  getConnectionsByUsername,
 } from "../controllers/connection.controller.js";
 
 const router = express.Router();
@@ -23,5 +24,6 @@ router.get("/", protectRoute, getUserConnections);
 router.delete("/:userId", protectRoute, removeConnection);
 router.get("/status/:userId", protectRoute, getConnectionStatus);
 router.get("/:userId", protectRoute, getUserById);
+router.get("/user/:username", protectRoute, getConnectionsByUsername);
 
 export default router;

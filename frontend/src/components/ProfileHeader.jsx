@@ -98,14 +98,12 @@ const ProfileHeader = ({ userData, onSave, isOwnProfile }) => {
     const baseClass =
       "text-white py-2 px-4 rounded-full transition duration-300 flex items-center justify-center";
 
-    // Jika username adalah "pengurusdesa", tampilkan tombol disabled
-    if (userData.username === "pengurusdesa") {
+    // Jika role adalah "admin", tampilkan tombol disabled
+    if (userData.role === "admin") {
       return (
-        <div
-          className={`${baseClass} bg-green-700 cursor-not-allowed`}
-        >
+        <div className={`${baseClass} bg-green-700 cursor-not-allowed`}>
           <UserCheck size={20} className="mr-2" />
-        Terkoneksi Otomatis
+          Terkoneksi Otomatis
         </div>
       );
     }
@@ -113,7 +111,7 @@ const ProfileHeader = ({ userData, onSave, isOwnProfile }) => {
     switch (getConnectionStatus) {
       case "connected":
         return (
-          <div className="flex gap-2 justify-center">
+          <div className="flex flex-wrap gap-2 justify-center">
             <div className={`${baseClass} bg-green-500 hover:bg-green-600`}>
               <UserCheck size={20} className="mr-2" />
               Connected
@@ -181,12 +179,12 @@ const ProfileHeader = ({ userData, onSave, isOwnProfile }) => {
 	};
 
 	return (
-    <div className="grid grid-cols-3 gap-6 p-2 bg-gray-100 shadow-2xl">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-2 bg-gray-100 shadow-2xl">
       {/* Bagian Kiri - Profile */}
-      <div className="col-span-2 bg-white shadow-lg rounded-lg space-y-3 flex flex-col items-center">
+      <div className="md:col-span-2 bg-white shadow-lg rounded-lg space-y-3 flex flex-col items-center">
         <div className="bg-white w-full">
           <div
-            className="relative h-48 rounded-t-lg bg-contain bg-center bg-no-repeat bg-gray-200"
+            className="relative h-32 md:h-48 rounded-t-lg bg-contain bg-center bg-no-repeat bg-gray-200"
             style={{
               backgroundImage: `url('${
                 editedData.bannerImg || userData.bannerImg || "/banner.png"
@@ -210,7 +208,7 @@ const ProfileHeader = ({ userData, onSave, isOwnProfile }) => {
           <div className="p-4">
             <div className="relative -mt-20 mb-4">
               <img
-                className="w-32 h-32 rounded-full mx-auto object-cover"
+                className="w-24 h-24 md:w-32 md:h-32 rounded-full mx-auto object-cover"
                 src={
                   editedData.profilePicture ||
                   userData.profilePicture ||
@@ -305,7 +303,7 @@ const ProfileHeader = ({ userData, onSave, isOwnProfile }) => {
       </div>
 
       {/* Bagian Kanan - Konten Tambahan */}
-      <div className="col-span-1 bg-white shadow-lg rounded-lg p-5 space-y-4">
+      <div className="md:col-span-1 bg-white shadow-lg rounded-lg p-5 space-y-4">
         <h2 className="text-lg font-semibold text-gray-700">User Stats</h2>
         <div className="flex justify-between items-center p-3 border rounded-md shadow-sm">
           <span className="text-gray-600">Connections</span>

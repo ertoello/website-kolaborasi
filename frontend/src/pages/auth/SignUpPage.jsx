@@ -31,7 +31,7 @@ const SignUpPage = () => {
       <div className="lg:w-1/2 text-center lg:text-left">
         <img
           className="mx-auto h-32 w-auto mb-6"
-          src="/logopanjang.png"
+          src="/logopanjang1.png"
           alt="Kolaborasi Digital"
         />
         <h2 className="text-4xl font-extrabold">🤝 Kolaborasi & Inovasi</h2>

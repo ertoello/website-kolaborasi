@@ -27,7 +27,11 @@ const ChatHeader = () => {
           </div>
         </div>
 
-        <button onClick={() => setSelectedUser(null)}>
+        {/* Tombol X hanya muncul di layar besar */}
+        <button
+          onClick={() => setSelectedUser(null)}
+          className="hidden lg:block"
+        >
           <X />
         </button>
       </div>

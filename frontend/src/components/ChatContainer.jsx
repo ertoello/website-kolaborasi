@@ -110,7 +110,7 @@ const ChatContainer = () => {
                 {formatMessageTime(message.createdAt)}
               </time>
             </div>
-            <div className="chat-bubble flex flex-col bg-[#EF8B8B] text-white">
+            <div className="chat-bubble flex flex-col bg-[#EF8B8B] text-white break-words">
               {message.image && (
                 <img
                   src={message.image}
@@ -118,7 +118,12 @@ const ChatContainer = () => {
                   className="sm:max-w-[200px] rounded-md mb-2"
                 />
               )}
-              {message.text && <p>{message.text}</p>}
+              {message.text && (
+                <div
+                  className="prose max-w-none break-words whitespace-pre-wrap overflow-hidden"
+                  dangerouslySetInnerHTML={{ __html: message.text }}
+                />
+              )}
             </div>
           </div>
         ))}
