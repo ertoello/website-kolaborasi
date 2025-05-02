@@ -17,13 +17,13 @@ export const useChatStore = create((set, get) => ({
 
     if (get().socket) return; // Hindari membuat socket baru jika sudah ada
 
-    // const socket = io("http://localhost:5000", {
-    //   query: { userId: authUser._id }, // Kirim ID user ke server saat koneksi dibuat
-    // });
+    const socket = io("http://localhost:5000", {
+      query: { userId: authUser._id }, // Kirim ID user ke server saat koneksi dibuat
+    });
 
-    const socket = io("https://w3lc3pgc-5000.asse.devtunnels.ms", {
-    query: { userId: authUser._id },
-  });
+  //   const socket = io("https://w3lc3pgc-5000.asse.devtunnels.ms", {
+  //   query: { userId: authUser._id },
+  // });
 
     set({ socket });
 
