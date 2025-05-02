@@ -23,7 +23,8 @@ if (process.env.NODE_ENV !== "production") {
   app.use(
     cors({
       origin: [
-        "http://localhost:5173",
+        // "http://localhost:5173",
+        "https://website-kolaborasi.vercel.app",
         "https://w3lc3pgc-5173.asse.devtunnels.ms",
       ],
       credentials: true,
