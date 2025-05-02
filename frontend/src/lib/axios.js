@@ -4,8 +4,8 @@ export const axiosInstance = axios.create({
   baseURL:
     import.meta.env.MODE === "production"
       ? // ? "https://w3lc3pgc-5000.asse.devtunnels.ms/api/v1" // kalau lagi testing online (DevTunnel)
-        "website-kolaborasi-production.up.railway.app/api/v1" // atau ini kalau lokal
-      : "/api/v1",
+        "http://localhost:5000/api/v1"
+      : "https://website-kolaborasi-production.up.railway.app/api/v1",
   withCredentials: true,
 });
 
