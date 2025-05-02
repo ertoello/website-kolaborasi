@@ -3,7 +3,6 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import path from "path";
-import { fileURLToPath } from "url";
 
 import authRoutes from "./routes/auth.route.js";
 import userRoutes from "./routes/user.route.js";
@@ -16,18 +15,18 @@ import { connectDB } from "./lib/db.js";
 import { app, server } from "./lib/socket.js"; // ✅ Gunakan app & server dari socket.js
 
 dotenv.config();
-// Mendapatkan __dirname dengan cara ES Module
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const PORT = process.env.PORT || 5000;
-// const __dirname = path.resolve();
+const __dirname = path.resolve();
 
-if (process.env.NODE_ENV !== "development") {
+if (process.env.NODE_ENV !== "production") {
   app.use(
     cors({
-      origin: "https://website-kolaborasi.vercel.app",
-      credentials: true, // jika kamu pakai cookies/token auth
+      origin: [
+        "http://localhost:5173",
+        "https://w3lc3pgc-5173.asse.devtunnels.ms",
+      ],
+      credentials: true,
     })
   );
 }
