@@ -21,18 +21,9 @@ export const useChatStore = create((set, get) => ({
     //   query: { userId: authUser._id }, // Kirim ID user ke server saat koneksi dibuat
     // });
 
-<<<<<<< HEAD
     const socket = io("website-kolaborasi.co.id", {
       query: { userId: authUser._id },
     });
-=======
-    const socket = io(
-      "https://website-kolaborasi-production-4e70.up.railway.app",
-      {
-        query: { userId: authUser._id },
-      }
-    );
->>>>>>> f4c8d85df739ce71da9de2fe5038be4e2085ddc3
 
     set({ socket });
 
