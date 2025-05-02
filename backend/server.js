@@ -22,11 +22,8 @@ const __dirname = path.resolve();
 if (process.env.NODE_ENV !== "development") {
   app.use(
     cors({
-      origin: [
-        "http://localhost:5173",
-        "https://w3lc3pgc-5173.asse.devtunnels.ms",
-      ],
-      credentials: true,
+      origin: "https://website-kolaborasi.vercel.app",
+      credentials: true, // jika kamu pakai cookies/token auth
     })
   );
 }
