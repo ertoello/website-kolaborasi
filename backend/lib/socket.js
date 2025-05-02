@@ -9,9 +9,9 @@ const io = new Server(server, {
   cors: {
     origin: [
       "http://localhost:5173",
-      "https://w3lc3pgc-5173.asse.devtunnels.ms" // tambahkan ini
+      "https://website-kolaborasi.vercel.app", // tambahkan ini
     ],
-    credentials: true
+    credentials: true,
   },
 });
 
