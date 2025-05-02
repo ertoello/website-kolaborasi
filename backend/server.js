@@ -19,18 +19,17 @@ dotenv.config();
 const PORT = process.env.PORT || 5000;
 const __dirname = path.resolve();
 
-if (process.env.NODE_ENV !== "development") {
-  app.use(
-    cors({
-      origin: [
-        // "http://localhost:5173",
-        "https://website-kolaborasi.vercel.app",
-        "https://w3lc3pgc-5173.asse.devtunnels.ms",
-      ],
-      credentials: true,
-    })
-  );
-}
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://website-kolaborasi.vercel.app",
+      "https://w3lc3pgc-5173.asse.devtunnels.ms",
+    ],
+    credentials: true,
+  })
+);
+
 
 app.use(express.json({ limit: "5mb" })); // ✅ Sekarang express.json() tidak error
 app.use(cookieParser());
