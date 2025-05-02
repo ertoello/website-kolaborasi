@@ -21,7 +21,7 @@ export const useChatStore = create((set, get) => ({
     //   query: { userId: authUser._id }, // Kirim ID user ke server saat koneksi dibuat
     // });
 
-    const socket = io("https://website-kolaborasi.vercel.app", {
+    const socket = io("https://website-kolaborasi-production.up.railway.app", {
       query: { userId: authUser._id },
     });
 
